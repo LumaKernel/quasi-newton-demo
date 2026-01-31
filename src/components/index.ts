@@ -4,3 +4,4 @@ export { IterationControls } from './IterationControls.tsx';
 export { ComparisonPanel } from './ComparisonPanel.tsx';
 export { LanguageSwitcher } from './LanguageSwitcher.tsx';
 export { ViewModeToggle } from './ViewModeToggle.tsx';
+export { StepDetails } from './StepDetails/index.ts';

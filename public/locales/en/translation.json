@@ -187,5 +187,13 @@
     "label": "Language",
     "en": "English",
     "ja": "Japanese"
+  },
+  "stepDetails": {
+    "updateFormula": "Update Formula",
+    "lineSearchDesc": "α is determined by line search (Armijo/Wolfe conditions) to ensure sufficient decrease",
+    "alphaDesc": "Step size found by line search satisfying descent conditions",
+    "improvement": "Improvement",
+    "hessianApproxDesc": "Quasi-Newton approximation to inverse Hessian, updated each iteration using gradient changes",
+    "seeMatrixComparison": "See matrix comparison panel for details"
   }
 }

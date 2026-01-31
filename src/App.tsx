@@ -13,6 +13,7 @@ import {
   ComparisonPanel,
   LanguageSwitcher,
   ViewModeToggle,
+  StepDetails,
   algorithmColors,
 } from '@/components/index.ts';
 import { useOptimization, useAnimation } from '@/hooks/index.ts';
@@ -174,16 +175,24 @@ const App = () => {
                           className={styles.colorDot}
                           style={{ background: algorithmColors[algId] }}
                         />
-                        {algId.toUpperCase()}
+                        {t(`optimizers.${algId}.name`)}
                       </div>
-                      <ContourPlot
-                        func={selectedFunction}
-                        iterations={result.iterations}
-                        currentIteration={currentIteration}
-                        width={450}
-                        height={400}
-                        onStartPointChange={handleStartPointChange}
-                      />
+                      <div className={styles.plotWithDetails}>
+                        <ContourPlot
+                          func={selectedFunction}
+                          iterations={result.iterations}
+                          currentIteration={currentIteration}
+                          width={450}
+                          height={400}
+                          onStartPointChange={handleStartPointChange}
+                        />
+                        <StepDetails
+                          algorithmId={algId}
+                          iterations={result.iterations}
+                          currentIteration={currentIteration}
+                          color={algorithmColors[algId]}
+                        />
+                      </div>
                     </div>
                   );
                 })
@@ -210,15 +219,23 @@ const App = () => {
                           className={styles.colorDot}
                           style={{ background: algorithmColors[algId] }}
                         />
-                        {algId.toUpperCase()}
+                        {t(`optimizers.${algId}.name`)}
                       </div>
-                      <SurfacePlot3D
-                        func={selectedFunction}
-                        iterations={result.iterations}
-                        currentIteration={currentIteration}
-                        width={450}
-                        height={400}
-                      />
+                      <div className={styles.plotWithDetails}>
+                        <SurfacePlot3D
+                          func={selectedFunction}
+                          iterations={result.iterations}
+                          currentIteration={currentIteration}
+                          width={450}
+                          height={400}
+                        />
+                        <StepDetails
+                          algorithmId={algId}
+                          iterations={result.iterations}
+                          currentIteration={currentIteration}
+                          color={algorithmColors[algId]}
+                        />
+                      </div>
                     </div>
                   );
                 })

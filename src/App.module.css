@@ -145,6 +145,19 @@
   margin-bottom: 24px;
 }
 
+.plotWithDetails {
+  display: grid;
+  grid-template-columns: auto 320px;
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .plotWithDetails {
+    grid-template-columns: 1fr;
+  }
+}
+
 .plotHeader {
   display: flex;
   align-items: center;
