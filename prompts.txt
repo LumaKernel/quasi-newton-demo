@@ -89,6 +89,9 @@ DONE
 DONE
 
 
+浮いてるパネルの透明な横部分 (コンテナ部分)に隠れるとサイドが押せないな。
+DONE
+
 
 check/review test/stories/coverage again now.
 
