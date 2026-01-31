@@ -13,6 +13,14 @@ export { ackley } from './ackley.ts';
 export { goldsteinPrice } from './goldsteinPrice.ts';
 export { easom } from './easom.ts';
 export { styblinskiTang } from './styblinskiTang.ts';
+export { mccormick } from './mccormick.ts';
+export { sixHumpCamel } from './sixHumpCamel.ts';
+export { schaffer2 } from './schaffer2.ts';
+export { bukin6 } from './bukin6.ts';
+export { crossInTray } from './crossInTray.ts';
+export { holderTable } from './holderTable.ts';
+export { dropWave } from './dropWave.ts';
+export { branin } from './branin.ts';
 
 import { rosenbrock } from './rosenbrock.ts';
 import { himmelblau } from './himmelblau.ts';
@@ -28,6 +36,14 @@ import { ackley } from './ackley.ts';
 import { goldsteinPrice } from './goldsteinPrice.ts';
 import { easom } from './easom.ts';
 import { styblinskiTang } from './styblinskiTang.ts';
+import { mccormick } from './mccormick.ts';
+import { sixHumpCamel } from './sixHumpCamel.ts';
+import { schaffer2 } from './schaffer2.ts';
+import { bukin6 } from './bukin6.ts';
+import { crossInTray } from './crossInTray.ts';
+import { holderTable } from './holderTable.ts';
+import { dropWave } from './dropWave.ts';
+import { branin } from './branin.ts';
 import type { ObjectiveFunction } from './types.ts';
 
 /**
@@ -49,6 +65,14 @@ export const allFunctions: readonly ObjectiveFunction[] = [
   goldsteinPrice,
   easom,
   styblinskiTang,
+  mccormick,
+  sixHumpCamel,
+  schaffer2,
+  bukin6,
+  crossInTray,
+  holderTable,
+  dropWave,
+  branin,
 ];
 
 /**

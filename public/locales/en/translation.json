@@ -174,6 +174,38 @@
     "styblinskiTang": {
       "name": "Styblinski-Tang",
       "description": "f(x,y) = 0.5[(x⁴-16x²+5x) + (y⁴-16y²+5y)]"
+    },
+    "mccormick": {
+      "name": "McCormick",
+      "description": "f(x,y) = sin(x+y) + (x-y)² - 1.5x + 2.5y + 1"
+    },
+    "sixHumpCamel": {
+      "name": "Six-Hump Camel",
+      "description": "f(x,y) = (4-2.1x²+x⁴/3)x² + xy + (-4+4y²)y²"
+    },
+    "schaffer2": {
+      "name": "Schaffer N.2",
+      "description": "f(x,y) = 0.5 + (sin²(x²-y²)-0.5)/(1+0.001(x²+y²))²"
+    },
+    "bukin6": {
+      "name": "Bukin N.6",
+      "description": "f(x,y) = 100√|y-0.01x²| + 0.01|x+10|"
+    },
+    "crossInTray": {
+      "name": "Cross-in-Tray",
+      "description": "f(x,y) = -0.0001(|sin(x)sin(y)exp(...)| + 1)^0.1"
+    },
+    "holderTable": {
+      "name": "Holder Table",
+      "description": "f(x,y) = -|sin(x)cos(y)exp(|1-√(x²+y²)/π|)|"
+    },
+    "dropWave": {
+      "name": "Drop-Wave",
+      "description": "f(x,y) = -(1+cos(12√(x²+y²)))/(0.5(x²+y²)+2)"
+    },
+    "branin": {
+      "name": "Branin",
+      "description": "f(x,y) = (y-bx²+cx-r)² + s(1-t)cos(x) + s"
     }
   },
   "optimizers": {
