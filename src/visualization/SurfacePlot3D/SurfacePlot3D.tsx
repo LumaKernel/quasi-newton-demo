@@ -88,6 +88,7 @@ export const SurfacePlot3D = ({
             iterations={iterations}
             currentIteration={currentIteration}
             algorithmId={algorithmId}
+            resolution={resolution}
           />
         </Suspense>
 

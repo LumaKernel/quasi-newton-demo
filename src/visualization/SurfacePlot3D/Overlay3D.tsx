@@ -3,12 +3,14 @@ import * as THREE from 'three';
 import { useVisualization, type OverlayData, type OverlayType } from '@/contexts/index.ts';
 import type { ObjectiveFunction } from '@/core/functions/types.ts';
 import type { IterationState } from '@/core/optimizers/types.ts';
+import { useSurfaceGeometry } from './useSurfaceGeometry.ts';
 
 interface Overlay3DProps {
   readonly func: ObjectiveFunction;
   readonly iterations: readonly IterationState[];
   readonly currentIteration: number;
   readonly algorithmId?: string;
+  readonly resolution?: number;
 }
 
 /** Compute overlay data from iteration state */
@@ -188,8 +190,10 @@ const Arrow = ({
   );
 };
 
-export const Overlay3D = ({ func, iterations, currentIteration, algorithmId }: Overlay3DProps) => {
+export const Overlay3D = ({ func, iterations, currentIteration, algorithmId, resolution = 80 }: Overlay3DProps) => {
   const { pinnedConfig, hoverOverlay } = useVisualization();
+  const { heightScale, valueRange } = useSurfaceGeometry(func, resolution);
+  const [minValue] = valueRange;
 
   // Compute activeOverlay: pinned takes priority, then hover
   const activeOverlay = useMemo((): OverlayData | null => {
@@ -213,23 +217,23 @@ export const Overlay3D = ({ func, iterations, currentIteration, algorithmId }: O
     const { type, currentPoint, gradient, direction, nextPoint, trustRegionRadius, fx, hessian, hessianApprox } = activeOverlay;
 
     // Convert 2D point to 3D (x, z in 3D corresponds to x, y in 2D)
+    // Use the same height scaling as Surface and OptimizationPath3D
     const x = currentPoint[0];
     const z = currentPoint[1];
-    const y = func.value([x, z]);
+    const fxVal = fx ?? func.value([x, z]);
+    const height = (fxVal - minValue) * heightScale + 0.02; // Slight offset above surface
 
-    // Normalize y value for better visualization
     const [xMin, xMax, yMin, yMax] = func.bounds;
     const rangeX = xMax - xMin;
     const rangeY = yMax - yMin;
     const scale = Math.max(rangeX, rangeY);
 
     // Calculate 3D positions and vectors
-    const currentPos: readonly [number, number, number] = [x, y * 0.5, z];
+    const currentPos: readonly [number, number, number] = [x, height, z];
 
     let gradientVec: readonly [number, number, number] | null = null;
     if (gradient) {
       // Gradient in 2D (gx, gy) becomes (gx, 0, gy) in 3D for horizontal visualization
-      // Scale to visible length
       const gradLen = Math.sqrt(gradient[0] ** 2 + gradient[1] ** 2);
       if (gradLen > 0.001) {
         const scaleFactor = Math.min(1, scale * 0.3 / gradLen);
@@ -258,8 +262,9 @@ export const Overlay3D = ({ func, iterations, currentIteration, algorithmId }: O
     if (nextPoint) {
       const nx = nextPoint[0];
       const nz = nextPoint[1];
-      const ny = func.value([nx, nz]);
-      nextPos = [nx, ny * 0.5, nz];
+      const nextFx = func.value([nx, nz]);
+      const nextHeight = (nextFx - minValue) * heightScale + 0.02;
+      nextPos = [nx, nextHeight, nz];
     }
 
     // Invert 2x2 matrix for quasi-Newton approximation
@@ -298,7 +303,7 @@ export const Overlay3D = ({ func, iterations, currentIteration, algorithmId }: O
       trueHessian,
       approxHessian,
     };
-  }, [activeOverlay, func]);
+  }, [activeOverlay, func, heightScale, minValue]);
 
   if (!overlayData) return null;
 
