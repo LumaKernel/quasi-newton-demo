@@ -10,6 +10,7 @@ interface AlgorithmSelectorProps {
 
 const algorithmColors: Record<string, string> = {
   steepestDescent: '#f39c12',
+  bb: '#16a085',
   newton: '#e74c3c',
   bfgs: '#3498db',
   dfp: '#27ae60',

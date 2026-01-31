@@ -64,6 +64,13 @@
         { "label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Gradient_descent" }
       ]
     },
+    "bb": {
+      "title": "Barzilai-Borwein (BB)",
+      "description": "The simplest quasi-Newton method. Approximates the inverse Hessian as a scalar times identity: Bₖ = αₖI. The scalar αₖ is derived from the secant condition, making it a 'spectral gradient method'.",
+      "links": [
+        { "label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Barzilai-Borwein_method" }
+      ]
+    },
     "newton": {
       "title": "Newton's Method",
       "description": "Uses the exact Hessian matrix H(x) to compute the search direction: d = -H⁻¹∇f. Provides quadratic convergence but requires computing and inverting the Hessian at each step.",
@@ -166,6 +173,10 @@
       "name": "Gradient Descent",
       "description": "Steepest descent using negative gradient direction"
     },
+    "bb": {
+      "name": "Barzilai-Borwein",
+      "description": "Simplest quasi-Newton with scalar Hessian approximation"
+    },
     "newton": {
       "name": "Newton's Method",
       "description": "Uses true Hessian matrix for quadratic convergence"
@@ -195,6 +206,7 @@
     "alphaDesc": "Step size found by line search satisfying descent conditions",
     "improvement": "Improvement",
     "hessianApproxDesc": "Quasi-Newton approximation to inverse Hessian, updated each iteration using gradient changes",
-    "seeMatrixComparison": "See matrix comparison panel for details"
+    "seeMatrixComparison": "See matrix comparison panel for details",
+    "bbExplanation": "This is the BB1 formula. It comes from minimizing ‖αy - s‖² which means finding α such that αI best approximates the inverse Hessian in the secant sense. This is the simplest quasi-Newton method!"
   }
 }

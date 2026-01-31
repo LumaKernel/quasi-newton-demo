@@ -24,7 +24,7 @@ const formatVectorLatex = (v: readonly number[], precision = 4): string => {
   return `\\begin{pmatrix} ${entries} \\end{pmatrix}`;
 };
 
-type FormulaKey = 'steepestDescent' | 'newton' | 'bfgs' | 'dfp' | 'sr1';
+type FormulaKey = 'steepestDescent' | 'bb' | 'newton' | 'bfgs' | 'dfp' | 'sr1';
 
 const methodFormulas: Record<
   FormulaKey,
@@ -33,12 +33,19 @@ const methodFormulas: Record<
     readonly directionDesc: string;
     readonly update: string;
     readonly hessianUpdate?: string;
+    readonly scalarUpdate?: string;
   }
 > = {
   steepestDescent: {
     direction: 'd_k = -\\nabla f(x_k)',
     directionDesc: 'Negative gradient (steepest descent direction)',
     update: 'x_{k+1} = x_k + \\alpha_k d_k',
+  },
+  bb: {
+    direction: 'd_k = -\\alpha_k \\nabla f(x_k)',
+    directionDesc: 'Scaled gradient using BB step size',
+    update: 'x_{k+1} = x_k + d_k',
+    scalarUpdate: '\\alpha_k = \\frac{s_{k-1}^T s_{k-1}}{s_{k-1}^T y_{k-1}} = \\frac{\\|s_{k-1}\\|^2}{s_{k-1}^T y_{k-1}}',
   },
   newton: {
     direction: 'd_k = -H^{-1} \\nabla f(x_k)',
@@ -117,6 +124,23 @@ export const StepDetails = ({
         <div className={styles.formulaBlock}>
           <BlockMath math={formulas.update} />
         </div>
+        {formulas.scalarUpdate && (
+          <details className={styles.hessianUpdateDetails} open>
+            <summary className={styles.hessianUpdateSummary}>
+              <InlineMath math="\alpha_k" /> {t('stepDetails.updateRule')}
+            </summary>
+            <div className={styles.hessianUpdateFormula}>
+              <BlockMath math={formulas.scalarUpdate} />
+              <div className={styles.whereClause}>
+                <InlineMath math="s_{k-1} = x_k - x_{k-1}" />
+                <InlineMath math="y_{k-1} = \nabla f(x_k) - \nabla f(x_{k-1})" />
+              </div>
+              <div className={styles.bbExplanation}>
+                {t('stepDetails.bbExplanation')}
+              </div>
+            </div>
+          </details>
+        )}
         {formulas.hessianUpdate && (
           <details className={styles.hessianUpdateDetails}>
             <summary className={styles.hessianUpdateSummary}>

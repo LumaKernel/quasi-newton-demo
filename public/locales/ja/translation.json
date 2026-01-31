@@ -65,6 +65,13 @@
         { "label": "Wikipedia (EN)", "url": "https://en.wikipedia.org/wiki/Gradient_descent" }
       ]
     },
+    "bb": {
+      "title": "Barzilai-Borwein法（BB法）",
+      "description": "最もシンプルな準ニュートン法。逆ヘッセ行列をスカラー倍の単位行列で近似：Bₖ = αₖI。スカラーαₖはセカント条件から導出され、「スペクトル勾配法」とも呼ばれます。",
+      "links": [
+        { "label": "Wikipedia (EN)", "url": "https://en.wikipedia.org/wiki/Barzilai-Borwein_method" }
+      ]
+    },
     "newton": {
       "title": "ニュートン法",
       "description": "正確なヘッセ行列 H(x) を使用して探索方向を計算：d = -H⁻¹∇f。2次収束を実現しますが、各ステップでヘッセ行列の計算と逆行列の計算が必要です。",
@@ -169,6 +176,10 @@
       "name": "勾配降下法",
       "description": "負の勾配方向を使用する最急降下法"
     },
+    "bb": {
+      "name": "Barzilai-Borwein法",
+      "description": "スカラー倍の単位行列でヘッセ行列を近似する最もシンプルな準ニュートン法"
+    },
     "newton": {
       "name": "ニュートン法",
       "description": "2次収束のために真のヘッセ行列を使用"
@@ -198,6 +209,7 @@
     "alphaDesc": "降下条件を満たす直線探索で求めたステップ幅",
     "improvement": "改善量",
     "hessianApproxDesc": "逆ヘッセ行列の準ニュートン近似。勾配の変化を使って各イテレーションで更新",
-    "seeMatrixComparison": "詳細は行列比較パネルを参照"
+    "seeMatrixComparison": "詳細は行列比較パネルを参照",
+    "bbExplanation": "これはBB1公式です。‖αy - s‖²を最小化することで導出されます。つまり、セカント条件の意味でαIが逆ヘッセ行列を最もよく近似するαを求めています。これが最もシンプルな準ニュートン法です！"
   }
 }
