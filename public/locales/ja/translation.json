@@ -59,19 +59,39 @@
     "title": "準ニュートン法の理解",
     "newton": {
       "title": "ニュートン法",
-      "description": "正確なヘッセ行列 H(x) を使用して探索方向を計算：d = -H⁻¹∇f。2次収束を実現しますが、各ステップでヘッセ行列の計算と逆行列の計算が必要です。"
+      "description": "正確なヘッセ行列 H(x) を使用して探索方向を計算：d = -H⁻¹∇f。2次収束を実現しますが、各ステップでヘッセ行列の計算と逆行列の計算が必要です。",
+      "links": [
+        { "label": "Wikipedia (日本語)", "url": "https://ja.wikipedia.org/wiki/%E6%9C%80%E9%81%A9%E5%8C%96%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E3%83%8B%E3%83%A5%E3%83%BC%E3%83%88%E3%83%B3%E6%B3%95" },
+        { "label": "Wikipedia (EN)", "url": "https://en.wikipedia.org/wiki/Newton%27s_method_in_optimization" },
+        { "label": "MathWorld", "url": "https://mathworld.wolfram.com/NewtonsMethod.html" }
+      ]
     },
     "bfgs": {
       "title": "BFGS",
-      "description": "勾配情報のみを使用して逆ヘッセ行列の近似 Bₖ を構築します。セカント条件 Bₖ₊₁yₖ = sₖ を満たすように近似を更新します。"
+      "description": "勾配情報のみを使用して逆ヘッセ行列の近似 Bₖ を構築します。セカント条件 Bₖ₊₁yₖ = sₖ を満たすように近似を更新します。",
+      "links": [
+        { "label": "Wikipedia (日本語)", "url": "https://ja.wikipedia.org/wiki/BFGS%E6%B3%95" },
+        { "label": "Wikipedia (EN)", "url": "https://en.wikipedia.org/wiki/Broyden%E2%80%93Fletcher%E2%80%93Goldfarb%E2%80%93Shanno_algorithm" }
+      ]
     },
     "dfp": {
       "title": "DFP",
-      "description": "最初の準ニュートン法で、Davidon が提案し、後に Fletcher と Powell によって発展されました。BFGS とは異なる更新公式を使用しますが、同様の結果を達成します。"
+      "description": "最初の準ニュートン法で、Davidon が提案し、後に Fletcher と Powell によって発展されました。BFGS とは異なる更新公式を使用しますが、同様の結果を達成します。",
+      "links": [
+        { "label": "Wikipedia (EN)", "url": "https://en.wikipedia.org/wiki/Davidon%E2%80%93Fletcher%E2%80%93Powell_formula" }
+      ]
     },
     "sr1": {
       "title": "SR1（対称ランク1更新）",
-      "description": "負の曲率を捉えることができるランク1更新を使用します。2次関数に対しては n ステップでヘッセ行列を正確に再構築できますが、正定値性は保証されません。"
+      "description": "負の曲率を捉えることができるランク1更新を使用します。2次関数に対しては n ステップでヘッセ行列を正確に再構築できますが、正定値性は保証されません。",
+      "links": [
+        { "label": "Wikipedia (EN)", "url": "https://en.wikipedia.org/wiki/Symmetric_rank-one" }
+      ]
+    },
+    "references": {
+      "title": "参考文献",
+      "quasiNewton": { "label": "準ニュートン法 (Wikipedia)", "url": "https://ja.wikipedia.org/wiki/%E6%BA%96%E3%83%8B%E3%83%A5%E3%83%BC%E3%83%88%E3%83%B3%E6%B3%95" },
+      "nocedal": { "label": "Numerical Optimization (Nocedal & Wright)", "url": "https://link.springer.com/book/10.1007/978-0-387-40065-5" }
     }
   },
   "functions": {

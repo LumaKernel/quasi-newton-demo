@@ -250,22 +250,48 @@ const App = () => {
         <section className={styles.explanation}>
           <h2>{t('explanation.title')}</h2>
           <div className={styles.explanationContent}>
-            <div className={styles.explanationCard}>
-              <h3>{t('explanation.newton.title')}</h3>
-              <p>{t('explanation.newton.description')}</p>
-            </div>
-            <div className={styles.explanationCard}>
-              <h3>{t('explanation.bfgs.title')}</h3>
-              <p>{t('explanation.bfgs.description')}</p>
-            </div>
-            <div className={styles.explanationCard}>
-              <h3>{t('explanation.dfp.title')}</h3>
-              <p>{t('explanation.dfp.description')}</p>
-            </div>
-            <div className={styles.explanationCard}>
-              <h3>{t('explanation.sr1.title')}</h3>
-              <p>{t('explanation.sr1.description')}</p>
-            </div>
+            {(['newton', 'bfgs', 'dfp', 'sr1'] as const).map((method) => {
+              const links = t(`explanation.${method}.links`, { returnObjects: true }) as
+                | readonly { readonly label: string; readonly url: string }[]
+                | string;
+              return (
+                <div key={method} className={styles.explanationCard}>
+                  <h3>{t(`explanation.${method}.title`)}</h3>
+                  <p>{t(`explanation.${method}.description`)}</p>
+                  {Array.isArray(links) && (
+                    <div className={styles.links}>
+                      {links.map((link) => (
+                        <a
+                          key={link.url}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <div className={styles.references}>
+            <h3>{t('explanation.references.title')}</h3>
+            <a
+              href={t('explanation.references.quasiNewton.url')}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t('explanation.references.quasiNewton.label')}
+            </a>
+            <a
+              href={t('explanation.references.nocedal.url')}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t('explanation.references.nocedal.label')}
+            </a>
           </div>
         </section>
       </main>

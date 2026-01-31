@@ -59,19 +59,37 @@
     "title": "Understanding Quasi-Newton Methods",
     "newton": {
       "title": "Newton's Method",
-      "description": "Uses the exact Hessian matrix H(x) to compute the search direction: d = -H⁻¹∇f. Provides quadratic convergence but requires computing and inverting the Hessian at each step."
+      "description": "Uses the exact Hessian matrix H(x) to compute the search direction: d = -H⁻¹∇f. Provides quadratic convergence but requires computing and inverting the Hessian at each step.",
+      "links": [
+        { "label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Newton%27s_method_in_optimization" },
+        { "label": "MathWorld", "url": "https://mathworld.wolfram.com/NewtonsMethod.html" }
+      ]
     },
     "bfgs": {
       "title": "BFGS",
-      "description": "Builds an approximation Bₖ to the inverse Hessian using only gradient information. Updates the approximation to satisfy the secant condition: Bₖ₊₁yₖ = sₖ."
+      "description": "Builds an approximation Bₖ to the inverse Hessian using only gradient information. Updates the approximation to satisfy the secant condition: Bₖ₊₁yₖ = sₖ.",
+      "links": [
+        { "label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Broyden%E2%80%93Fletcher%E2%80%93Goldfarb%E2%80%93Shanno_algorithm" }
+      ]
     },
     "dfp": {
       "title": "DFP",
-      "description": "The first quasi-Newton method, proposed by Davidon and later developed by Fletcher and Powell. Uses a different update formula than BFGS but achieves similar results."
+      "description": "The first quasi-Newton method, proposed by Davidon and later developed by Fletcher and Powell. Uses a different update formula than BFGS but achieves similar results.",
+      "links": [
+        { "label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Davidon%E2%80%93Fletcher%E2%80%93Powell_formula" }
+      ]
     },
     "sr1": {
       "title": "SR1 (Symmetric Rank-1)",
-      "description": "Uses a rank-1 update that can capture negative curvature. Can exactly reconstruct the Hessian for quadratic functions in n steps, but doesn't guarantee positive definiteness."
+      "description": "Uses a rank-1 update that can capture negative curvature. Can exactly reconstruct the Hessian for quadratic functions in n steps, but doesn't guarantee positive definiteness.",
+      "links": [
+        { "label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Symmetric_rank-one" }
+      ]
+    },
+    "references": {
+      "title": "General References",
+      "quasiNewton": { "label": "Quasi-Newton Methods (Wikipedia)", "url": "https://en.wikipedia.org/wiki/Quasi-Newton_method" },
+      "nocedal": { "label": "Numerical Optimization (Nocedal & Wright)", "url": "https://link.springer.com/book/10.1007/978-0-387-40065-5" }
     }
   },
   "functions": {

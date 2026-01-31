@@ -230,6 +230,49 @@
   font-size: 12px;
 }
 
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.links a,
+.references a {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: #3498db;
+  background: #fff;
+  border: 1px solid #3498db;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.links a:hover,
+.references a:hover {
+  background: #3498db;
+  color: #fff;
+}
+
+.references {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.references h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #333;
+}
+
+.references a {
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
 .footer {
   padding: 20px 32px;
   background: #2c3e50;
