@@ -141,7 +141,10 @@ const App = () => {
             {t('controls.runOptimization')}
           </button>
 
-          {maxIterationCount > 0 && (
+        </section>
+
+        {maxIterationCount > 0 && (
+          <div className={styles.stickyControls}>
             <IterationControls
               currentIteration={currentIteration}
               maxIteration={maxIterationCount}
@@ -152,8 +155,8 @@ const App = () => {
               onReset={reset}
               onSpeedChange={setSpeed}
             />
-          )}
-        </section>
+          </div>
+        )}
 
         <section className={styles.visualization}>
           <div className={styles.plotContainer}>
