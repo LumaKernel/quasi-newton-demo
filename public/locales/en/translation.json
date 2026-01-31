@@ -9,7 +9,6 @@
     "algorithms": "Algorithms",
     "startPoint": "Start Point",
     "startPointHint": "Or click on the plot to set start point",
-    "runOptimization": "Run Optimization",
     "trueHessian": "True Hessian"
   },
   "iteration": {

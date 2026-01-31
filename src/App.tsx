@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ObjectiveFunction } from '@/core/functions/types.ts';
 import type { OptimizerInfo } from '@/core/optimizers/types.ts';
@@ -58,15 +58,12 @@ const App = () => {
   const handleStartPointChange = useCallback(
     (point: readonly [number, number]) => {
       setStartPoint(point);
-      if (selectedAlgorithms.length > 0) {
-        runOptimization(selectedFunction, point, selectedAlgorithms);
-        reset();
-      }
     },
-    [selectedFunction, selectedAlgorithms, runOptimization, reset],
+    [],
   );
 
-  const handleRun = useCallback(() => {
+  // Auto-run optimization when parameters change
+  useEffect(() => {
     if (selectedAlgorithms.length > 0) {
       runOptimization(selectedFunction, startPoint, selectedAlgorithms);
       reset();
@@ -123,7 +120,7 @@ const App = () => {
                 step="0.1"
                 value={startPoint[0]}
                 onChange={(e) =>
-                  setStartPoint([Number(e.target.value), startPoint[1]])
+                  handleStartPointChange([Number(e.target.value), startPoint[1]])
                 }
               />
               <input
@@ -131,17 +128,12 @@ const App = () => {
                 step="0.1"
                 value={startPoint[1]}
                 onChange={(e) =>
-                  setStartPoint([startPoint[0], Number(e.target.value)])
+                  handleStartPointChange([startPoint[0], Number(e.target.value)])
                 }
               />
             </div>
             <p className={styles.hint}>{t('controls.startPointHint')}</p>
           </div>
-
-          <button className={styles.runButton} onClick={handleRun}>
-            {t('controls.runOptimization')}
-          </button>
-
         </section>
 
         {maxIterationCount > 0 && (

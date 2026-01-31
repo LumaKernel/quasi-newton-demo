@@ -9,7 +9,6 @@
     "algorithms": "アルゴリズム",
     "startPoint": "開始点",
     "startPointHint": "またはプロット上をクリックして開始点を設定",
-    "runOptimization": "最適化を実行",
     "trueHessian": "真のヘッセ行列"
   },
   "iteration": {
