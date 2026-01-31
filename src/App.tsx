@@ -30,6 +30,7 @@ const App = () => {
   const [selectedAlgorithms, setSelectedAlgorithms] = useState<readonly string[]>([
     'steepestDescent',
     'newton',
+    'bfgs',
     'bb',
     'trustRegion',
   ]);

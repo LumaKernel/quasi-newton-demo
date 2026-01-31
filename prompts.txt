@@ -93,5 +93,8 @@ DONE
 DONE
 
 
+フォルトでBFGSも表示する対象に入れておいて。
+
+
 check/review test/stories/coverage again now.
 
