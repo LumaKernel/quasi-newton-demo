@@ -28,53 +28,69 @@ export interface OverlayData {
   };
 }
 
+interface PinnedConfig {
+  readonly type: OverlayType;
+  readonly algorithmId: string;
+}
+
 interface VisualizationContextValue {
   readonly activeOverlay: OverlayData | null;
-  readonly isPinned: boolean;
+  readonly pinnedConfig: PinnedConfig | null;
   readonly showOverlay: (overlay: OverlayData) => void;
-  readonly hideOverlay: () => void;
+  readonly hideOverlay: (algorithmId: string) => void;
   readonly togglePin: (overlay: OverlayData) => void;
+  readonly updatePinnedOverlay: (overlay: OverlayData) => void;
 }
 
 const VisualizationContext = createContext<VisualizationContextValue | null>(null);
 
 export const VisualizationProvider = ({ children }: { readonly children: React.ReactNode }) => {
   const [activeOverlay, setActiveOverlay] = useState<OverlayData | null>(null);
-  const [isPinned, setIsPinned] = useState(false);
+  const [pinnedConfig, setPinnedConfig] = useState<PinnedConfig | null>(null);
 
   const showOverlay = useCallback((overlay: OverlayData) => {
-    if (!isPinned) {
+    // Only show if not pinned, or if this is the pinned algorithm updating its data
+    if (!pinnedConfig) {
       setActiveOverlay(overlay);
     }
-  }, [isPinned]);
+  }, [pinnedConfig]);
 
-  const hideOverlay = useCallback(() => {
-    if (!isPinned) {
-      setActiveOverlay(null);
+  const hideOverlay = useCallback((algorithmId: string) => {
+    // Only hide if not pinned for this algorithm
+    if (!pinnedConfig || pinnedConfig.algorithmId !== algorithmId) {
+      setActiveOverlay((prev) => (prev?.algorithmId === algorithmId ? null : prev));
     }
-  }, [isPinned]);
+  }, [pinnedConfig]);
 
   const togglePin = useCallback((overlay: OverlayData) => {
-    if (isPinned && activeOverlay?.type === overlay.type && activeOverlay?.algorithmId === overlay.algorithmId) {
+    if (pinnedConfig?.type === overlay.type && pinnedConfig?.algorithmId === overlay.algorithmId) {
       // Unpin if clicking the same overlay
-      setIsPinned(false);
+      setPinnedConfig(null);
       setActiveOverlay(null);
     } else {
       // Pin this overlay
+      setPinnedConfig({ type: overlay.type, algorithmId: overlay.algorithmId });
       setActiveOverlay(overlay);
-      setIsPinned(true);
     }
-  }, [isPinned, activeOverlay]);
+  }, [pinnedConfig]);
+
+  // Called by StepDetails to update the pinned overlay data when iteration changes
+  const updatePinnedOverlay = useCallback((overlay: OverlayData) => {
+    if (pinnedConfig?.type === overlay.type && pinnedConfig?.algorithmId === overlay.algorithmId) {
+      setActiveOverlay(overlay);
+    }
+  }, [pinnedConfig]);
 
   const value = useMemo(
     () => ({
       activeOverlay,
-      isPinned,
+      pinnedConfig,
       showOverlay,
       hideOverlay,
       togglePin,
+      updatePinnedOverlay,
     }),
-    [activeOverlay, isPinned, showOverlay, hideOverlay, togglePin],
+    [activeOverlay, pinnedConfig, showOverlay, hideOverlay, togglePin, updatePinnedOverlay],
   );
 
   return (
