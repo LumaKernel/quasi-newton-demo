@@ -126,8 +126,6 @@ const App = () => {
             onToggle={handleAlgorithmToggle}
           />
 
-          <ViewModeToggle value={viewMode} onChange={setViewMode} />
-
           <div className={styles.startPoint}>
             <label>{t('controls.startPoint')}</label>
             <div className={styles.pointInputs}>
@@ -152,20 +150,23 @@ const App = () => {
           </div>
         </section>
 
-        {maxIterationCount > 0 && (
-          <div className={styles.stickyControls}>
-            <IterationControls
-              currentIteration={currentIteration}
-              maxIteration={maxIterationCount}
-              isPlaying={isPlaying}
-              speed={speed}
-              onIterationChange={goToIteration}
-              onPlayPause={togglePlayPause}
-              onReset={reset}
-              onSpeedChange={setSpeed}
-            />
+        <div className={styles.stickyControls}>
+          <div className={styles.stickyControlsInner}>
+            <ViewModeToggle value={viewMode} onChange={setViewMode} />
+            {maxIterationCount > 0 && (
+              <IterationControls
+                currentIteration={currentIteration}
+                maxIteration={maxIterationCount}
+                isPlaying={isPlaying}
+                speed={speed}
+                onIterationChange={goToIteration}
+                onPlayPause={togglePlayPause}
+                onReset={reset}
+                onSpeedChange={setSpeed}
+              />
+            )}
           </div>
-        )}
+        </div>
 
         <section className={styles.visualization}>
           <div className={styles.plotContainer}>
