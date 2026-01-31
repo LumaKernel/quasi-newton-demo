@@ -24,7 +24,7 @@ const formatVectorLatex = (v: readonly number[], precision = 4): string => {
   return `\\begin{pmatrix} ${entries} \\end{pmatrix}`;
 };
 
-type FormulaKey = 'steepestDescent' | 'bb' | 'newton' | 'bfgs' | 'dfp' | 'sr1';
+type FormulaKey = 'steepestDescent' | 'bb' | 'newton' | 'trustRegion' | 'bfgs' | 'dfp' | 'sr1';
 
 const methodFormulas: Record<
   FormulaKey,
@@ -34,6 +34,8 @@ const methodFormulas: Record<
     readonly update: string;
     readonly hessianUpdate?: string;
     readonly scalarUpdate?: string;
+    readonly qpSubproblem?: string;
+    readonly trustRegionUpdate?: string;
   }
 > = {
   steepestDescent: {
@@ -51,6 +53,13 @@ const methodFormulas: Record<
     direction: 'd_k = -H^{-1} \\nabla f(x_k)',
     directionDesc: 'Newton direction using true inverse Hessian',
     update: 'x_{k+1} = x_k + \\alpha_k d_k',
+  },
+  trustRegion: {
+    direction: 'd_k = \\arg\\min_d m_k(d)',
+    directionDesc: 'Solution of QP subproblem',
+    update: 'x_{k+1} = x_k + d_k \\quad (\\text{if } \\rho_k > \\eta)',
+    qpSubproblem: '\\min_d \\; m_k(d) = f_k + \\nabla f_k^T d + \\frac{1}{2} d^T H_k d \\quad \\text{s.t.} \\; \\|d\\| \\leq \\Delta_k',
+    trustRegionUpdate: '\\rho_k = \\frac{f(x_k) - f(x_k + d_k)}{m_k(0) - m_k(d_k)}',
   },
   bfgs: {
     direction: 'd_k = -B_k \\nabla f(x_k)',
@@ -154,6 +163,36 @@ export const StepDetails = ({
                 {algorithmId === 'bfgs' && (
                   <InlineMath math="\rho_k = \frac{1}{y_k^T s_k}" />
                 )}
+              </div>
+            </div>
+          </details>
+        )}
+        {formulas.qpSubproblem && (
+          <details className={styles.hessianUpdateDetails} open>
+            <summary className={styles.hessianUpdateSummary}>
+              {t('stepDetails.qpSubproblem')}
+            </summary>
+            <div className={styles.hessianUpdateFormula}>
+              <BlockMath math={formulas.qpSubproblem} />
+              <div className={styles.qpExplanation}>
+                {t('stepDetails.qpExplanation')}
+              </div>
+            </div>
+          </details>
+        )}
+        {formulas.trustRegionUpdate && (
+          <details className={styles.hessianUpdateDetails} open>
+            <summary className={styles.hessianUpdateSummary}>
+              <InlineMath math="\Delta_k" /> {t('stepDetails.updateRule')}
+            </summary>
+            <div className={styles.hessianUpdateFormula}>
+              <BlockMath math={formulas.trustRegionUpdate} />
+              <div className={styles.whereClause}>
+                <InlineMath math="\rho_k > 0.75 \text{ and on boundary} \Rightarrow \Delta_{k+1} = 2\Delta_k" />
+                <InlineMath math="\rho_k < 0.25 \Rightarrow \Delta_{k+1} = 0.25\Delta_k" />
+              </div>
+              <div className={styles.trustRegionExplanation}>
+                {t('stepDetails.trustRegionExplanation')}
               </div>
             </div>
           </details>

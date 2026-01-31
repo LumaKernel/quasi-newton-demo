@@ -118,6 +118,26 @@
   line-height: 1.5;
 }
 
+.qpExplanation {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: #fce4ec;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #c2185b;
+  line-height: 1.5;
+}
+
+.trustRegionExplanation {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: #f3e5f5;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #7b1fa2;
+  line-height: 1.5;
+}
+
 .valuesSection {
   display: flex;
   flex-direction: column;

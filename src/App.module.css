@@ -219,14 +219,18 @@
 }
 
 .explanationCard:nth-child(4) {
-  border-left-color: #3498db;
+  border-left-color: #c0392b;
 }
 
 .explanationCard:nth-child(5) {
-  border-left-color: #27ae60;
+  border-left-color: #3498db;
 }
 
 .explanationCard:nth-child(6) {
+  border-left-color: #27ae60;
+}
+
+.explanationCard:nth-child(7) {
   border-left-color: #9b59b6;
 }
 

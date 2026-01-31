@@ -12,6 +12,7 @@ const algorithmColors: Record<string, string> = {
   steepestDescent: '#f39c12',
   bb: '#16a085',
   newton: '#e74c3c',
+  trustRegion: '#c0392b',
   bfgs: '#3498db',
   dfp: '#27ae60',
   sr1: '#9b59b6',

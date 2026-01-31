@@ -79,6 +79,14 @@
         { "label": "MathWorld", "url": "https://mathworld.wolfram.com/NewtonsMethod.html" }
       ]
     },
+    "trustRegion": {
+      "title": "Trust Region (SQP)",
+      "description": "Solves a quadratic programming (QP) subproblem at each step: minimize the quadratic model subject to ||d|| ≤ Δ. This is the core idea of Sequential Quadratic Programming (SQP). The trust region Δ is adjusted based on model accuracy.",
+      "links": [
+        { "label": "Trust Region (Wikipedia)", "url": "https://en.wikipedia.org/wiki/Trust_region" },
+        { "label": "SQP (Wikipedia)", "url": "https://en.wikipedia.org/wiki/Sequential_quadratic_programming" }
+      ]
+    },
     "bfgs": {
       "title": "BFGS",
       "description": "Builds an approximation Bₖ to the inverse Hessian using only gradient information. Updates the approximation to satisfy the secant condition: Bₖ₊₁yₖ = sₖ.",
@@ -181,6 +189,10 @@
       "name": "Newton's Method",
       "description": "Uses true Hessian matrix for quadratic convergence"
     },
+    "trustRegion": {
+      "name": "Trust Region",
+      "description": "Solves QP subproblem with trust region constraint"
+    },
     "bfgs": {
       "name": "BFGS",
       "description": "Broyden-Fletcher-Goldfarb-Shanno quasi-Newton method"
@@ -207,6 +219,9 @@
     "improvement": "Improvement",
     "hessianApproxDesc": "Quasi-Newton approximation to inverse Hessian, updated each iteration using gradient changes",
     "seeMatrixComparison": "See matrix comparison panel for details",
-    "bbExplanation": "This is the BB1 formula. It comes from minimizing ‖αy - s‖² which means finding α such that αI best approximates the inverse Hessian in the secant sense. This is the simplest quasi-Newton method!"
+    "bbExplanation": "This is the BB1 formula. It comes from minimizing ‖αy - s‖² which means finding α such that αI best approximates the inverse Hessian in the secant sense. This is the simplest quasi-Newton method!",
+    "qpSubproblem": "QP Subproblem",
+    "qpExplanation": "This quadratic programming (QP) subproblem is the heart of SQP. The quadratic model m_k(d) approximates f(x_k + d) using Taylor expansion. The constraint ||d|| ≤ Δ_k limits the step to a \"trust region\" where the model is reliable.",
+    "trustRegionExplanation": "The ratio ρ_k measures how well the quadratic model predicted the actual reduction. If ρ_k is large, we trust the model and expand Δ. If ρ_k is small, the model was inaccurate so we shrink Δ."
   }
 }

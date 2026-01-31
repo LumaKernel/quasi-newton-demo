@@ -81,6 +81,14 @@
         { "label": "MathWorld", "url": "https://mathworld.wolfram.com/NewtonsMethod.html" }
       ]
     },
+    "trustRegion": {
+      "title": "信頼領域法（SQP）",
+      "description": "各ステップで2次計画（QP）部分問題を解く：2次モデルを ||d|| ≤ Δ の制約下で最小化。これが逐次2次計画法（SQP）の核心的なアイデア。信頼領域Δはモデルの精度に基づいて調整される。",
+      "links": [
+        { "label": "信頼領域法 (Wikipedia)", "url": "https://ja.wikipedia.org/wiki/%E4%BF%A1%E9%A0%BC%E9%A0%98%E5%9F%9F%E6%B3%95" },
+        { "label": "SQP (Wikipedia EN)", "url": "https://en.wikipedia.org/wiki/Sequential_quadratic_programming" }
+      ]
+    },
     "bfgs": {
       "title": "BFGS",
       "description": "勾配情報のみを使用して逆ヘッセ行列の近似 Bₖ を構築します。セカント条件 Bₖ₊₁yₖ = sₖ を満たすように近似を更新します。",
@@ -184,6 +192,10 @@
       "name": "ニュートン法",
       "description": "2次収束のために真のヘッセ行列を使用"
     },
+    "trustRegion": {
+      "name": "信頼領域法",
+      "description": "信頼領域制約付きのQP部分問題を解く"
+    },
     "bfgs": {
       "name": "BFGS",
       "description": "Broyden-Fletcher-Goldfarb-Shanno 準ニュートン法"
@@ -210,6 +222,9 @@
     "improvement": "改善量",
     "hessianApproxDesc": "逆ヘッセ行列の準ニュートン近似。勾配の変化を使って各イテレーションで更新",
     "seeMatrixComparison": "詳細は行列比較パネルを参照",
-    "bbExplanation": "これはBB1公式です。‖αy - s‖²を最小化することで導出されます。つまり、セカント条件の意味でαIが逆ヘッセ行列を最もよく近似するαを求めています。これが最もシンプルな準ニュートン法です！"
+    "bbExplanation": "これはBB1公式です。‖αy - s‖²を最小化することで導出されます。つまり、セカント条件の意味でαIが逆ヘッセ行列を最もよく近似するαを求めています。これが最もシンプルな準ニュートン法です！",
+    "qpSubproblem": "QP部分問題",
+    "qpExplanation": "この2次計画（QP）部分問題がSQPの核心です。2次モデルm_k(d)はテイラー展開を用いてf(x_k + d)を近似します。制約||d|| ≤ Δ_kはステップをモデルが信頼できる「信頼領域」内に制限します。",
+    "trustRegionExplanation": "比率ρ_kは2次モデルが実際の減少をどれだけ正確に予測したかを測ります。ρ_kが大きければモデルを信頼してΔを拡大。ρ_kが小さければモデルが不正確だったのでΔを縮小します。"
   }
 }

@@ -12,6 +12,7 @@ export { dfp, dfpOptimize, dfpUpdate } from './dfp.ts';
 export { sr1, sr1Optimize, sr1Update } from './sr1.ts';
 export { steepestDescent, gradientDescent } from './gradientDescent.ts';
 export { barzilaiBotwein, barzilaiBotweinOptimize } from './barzilaiBotwein.ts';
+export { trustRegion, trustRegionOptimize } from './trustRegion.ts';
 
 import { newton } from './newton.ts';
 import { bfgs } from './bfgs.ts';
@@ -19,6 +20,7 @@ import { dfp } from './dfp.ts';
 import { sr1 } from './sr1.ts';
 import { steepestDescent } from './gradientDescent.ts';
 import { barzilaiBotwein } from './barzilaiBotwein.ts';
+import { trustRegion } from './trustRegion.ts';
 import type { OptimizerInfo } from './types.ts';
 
 /**
@@ -28,6 +30,7 @@ export const allOptimizers: readonly OptimizerInfo[] = [
   steepestDescent,
   barzilaiBotwein,
   newton,
+  trustRegion,
   bfgs,
   dfp,
   sr1,
