@@ -143,6 +143,9 @@ export const StepDetails = ({
         ...(currentState.trueHessian && {
           hessian: currentState.trueHessian,
         }),
+        ...(currentState.hessianApprox && {
+          hessianApprox: currentState.hessianApprox,
+        }),
       };
     },
     [currentState, nextState, algorithmId],

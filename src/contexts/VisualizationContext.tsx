@@ -18,6 +18,8 @@ export interface OverlayData {
   readonly trustRegionRadius?: number;
   readonly fx?: number;
   readonly hessian?: readonly (readonly number[])[];
+  /** Approximate inverse Hessian B_k for quasi-Newton methods */
+  readonly hessianApprox?: readonly (readonly number[])[];
   readonly hessianEigenvectors?: {
     readonly v1: readonly [number, number];
     readonly v2: readonly [number, number];

@@ -7,6 +7,88 @@ interface Overlay3DProps {
   readonly func: ObjectiveFunction;
 }
 
+// Quadratic model surface mesh
+const QuadraticSurface = ({
+  center,
+  gradient,
+  hessian,
+  fx,
+  color,
+  func,
+}: {
+  readonly center: readonly [number, number];
+  readonly gradient: readonly [number, number];
+  readonly hessian: readonly (readonly number[])[];
+  readonly fx: number;
+  readonly func: ObjectiveFunction;
+  readonly color: string;
+}) => {
+  const geometry = useMemo(() => {
+    const resolution = 30;
+    const [xMin, xMax, yMin, yMax] = func.bounds;
+    const range = Math.min(xMax - xMin, yMax - yMin) * 0.25;
+
+    const localXMin = center[0] - range;
+    const localXMax = center[0] + range;
+    const localYMin = center[1] - range;
+    const localYMax = center[1] + range;
+
+    const geo = new THREE.BufferGeometry();
+    const vertices: number[] = [];
+    const indices: number[] = [];
+
+    // Generate vertices for the quadratic surface
+    for (let j = 0; j <= resolution; j++) {
+      for (let i = 0; i <= resolution; i++) {
+        const x = localXMin + (i / resolution) * (localXMax - localXMin);
+        const z = localYMin + (j / resolution) * (localYMax - localYMin);
+        const dx = x - center[0];
+        const dz = z - center[1];
+
+        // m(x) = fx + g'd + 0.5*d'Hd
+        const gradTerm = gradient[0] * dx + gradient[1] * dz;
+        const hessTermX = hessian[0][0] * dx + hessian[0][1] * dz;
+        const hessTermZ = hessian[1][0] * dx + hessian[1][1] * dz;
+        const quadTerm = 0.5 * (dx * hessTermX + dz * hessTermZ);
+        const y = (fx + gradTerm + quadTerm) * 0.5; // Scale y for visualization
+
+        vertices.push(x, y, z);
+      }
+    }
+
+    // Generate indices for triangles
+    for (let j = 0; j < resolution; j++) {
+      for (let i = 0; i < resolution; i++) {
+        const a = i + j * (resolution + 1);
+        const b = i + 1 + j * (resolution + 1);
+        const c = i + (j + 1) * (resolution + 1);
+        const d = i + 1 + (j + 1) * (resolution + 1);
+
+        indices.push(a, b, c);
+        indices.push(b, d, c);
+      }
+    }
+
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+
+    return geo;
+  }, [center, gradient, hessian, fx, func]);
+
+  return (
+    <mesh geometry={geometry}>
+      <meshStandardMaterial
+        color={color}
+        transparent
+        opacity={0.4}
+        side={THREE.DoubleSide}
+        wireframe={false}
+      />
+    </mesh>
+  );
+};
+
 // Line to next point with sphere
 const NextPointLine = ({
   currentPos,
@@ -81,7 +163,7 @@ export const Overlay3D = ({ func }: Overlay3DProps) => {
   const overlayData = useMemo(() => {
     if (!activeOverlay) return null;
 
-    const { type, currentPoint, gradient, direction, nextPoint, trustRegionRadius } = activeOverlay;
+    const { type, currentPoint, gradient, direction, nextPoint, trustRegionRadius, fx, hessian, hessianApprox } = activeOverlay;
 
     // Convert 2D point to 3D (x, z in 3D corresponds to x, y in 2D)
     const x = currentPoint[0];
@@ -133,19 +215,47 @@ export const Overlay3D = ({ func }: Overlay3DProps) => {
       nextPos = [nx, ny * 0.5, nz];
     }
 
+    // Invert 2x2 matrix for quasi-Newton approximation
+    const invert2x2 = (B: readonly (readonly number[])[]): readonly (readonly number[])[] | null => {
+      const det = B[0][0] * B[1][1] - B[0][1] * B[1][0];
+      if (Math.abs(det) < 1e-10) return null;
+      return [
+        [B[1][1] / det, -B[0][1] / det],
+        [-B[1][0] / det, B[0][0] / det],
+      ];
+    };
+
+    // Quadratic model data
+    let trueHessian: readonly (readonly number[])[] | null = null;
+    let approxHessian: readonly (readonly number[])[] | null = null;
+
+    if (type === 'quadraticModel') {
+      if (hessian) {
+        trueHessian = hessian;
+      }
+      if (hessianApprox) {
+        approxHessian = invert2x2(hessianApprox);
+      }
+    }
+
     return {
       type,
       currentPos,
+      currentPoint,
+      gradient,
       gradientVec,
       directionVec,
       nextPos,
       trustRegionRadius: trustRegionRadius ? trustRegionRadius * 0.5 : undefined,
+      fx,
+      trueHessian,
+      approxHessian,
     };
   }, [activeOverlay, func]);
 
   if (!overlayData) return null;
 
-  const { type, currentPos, gradientVec, directionVec, nextPos, trustRegionRadius } = overlayData;
+  const { type, currentPos, currentPoint, gradient, gradientVec, directionVec, nextPos, trustRegionRadius, fx, trueHessian, approxHessian } = overlayData;
 
   return (
     <group>
@@ -194,6 +304,30 @@ export const Overlay3D = ({ func }: Overlay3DProps) => {
             side={THREE.DoubleSide}
           />
         </mesh>
+      )}
+
+      {/* Quasi-Newton quadratic model (purple surface) */}
+      {type === 'quadraticModel' && approxHessian && gradient && fx !== undefined && currentPoint && (
+        <QuadraticSurface
+          center={currentPoint}
+          gradient={gradient}
+          hessian={approxHessian}
+          fx={fx}
+          func={func}
+          color="#9b59b6"
+        />
+      )}
+
+      {/* True quadratic model (orange surface) */}
+      {type === 'quadraticModel' && trueHessian && gradient && fx !== undefined && currentPoint && (
+        <QuadraticSurface
+          center={currentPoint}
+          gradient={gradient}
+          hessian={trueHessian}
+          fx={fx}
+          func={func}
+          color="#e67e22"
+        />
       )}
     </group>
   );
