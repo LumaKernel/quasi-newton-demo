@@ -138,6 +138,16 @@
   line-height: 1.5;
 }
 
+.quadraticModelExplanation {
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: #ede7f6;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #512da8;
+  line-height: 1.5;
+}
+
 .valuesSection {
   display: flex;
   flex-direction: column;

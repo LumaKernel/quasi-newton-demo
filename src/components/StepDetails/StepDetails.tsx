@@ -228,6 +228,29 @@ export const StepDetails = ({
             </div>
           </details>
         )}
+        {formulas.hessianUpdate && (
+          <details className={styles.hessianUpdateDetails} open>
+            <summary className={styles.hessianUpdateSummary}>
+              {t('stepDetails.quadraticModel')}
+            </summary>
+            <div className={styles.hessianUpdateFormula}>
+              <div
+                {...createOverlayHandler('quadraticModel')}
+                title={t('stepDetails.hoverHint')}
+              >
+                <BlockMath math="m(d) = f_k + \nabla f_k^T d + \frac{1}{2} d^T B_k^{-1} d" />
+                <span className={styles.hoverHintInline}>
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                  </svg>
+                </span>
+              </div>
+              <div className={styles.quadraticModelExplanation}>
+                {t('stepDetails.quadraticModelExplanation')}
+              </div>
+            </div>
+          </details>
+        )}
         {formulas.qpSubproblem && (
           <details className={styles.hessianUpdateDetails} open>
             <summary className={styles.hessianUpdateSummary}>
