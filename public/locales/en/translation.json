@@ -94,6 +94,46 @@
     "beale": {
       "name": "Beale",
       "description": "f(x,y) = (1.5 - x + xy)² + (2.25 - x + xy²)² + (2.625 - x + xy³)²"
+    },
+    "booth": {
+      "name": "Booth",
+      "description": "f(x,y) = (x + 2y - 7)² + (2x + y - 5)²"
+    },
+    "matyas": {
+      "name": "Matyas",
+      "description": "f(x,y) = 0.26(x² + y²) - 0.48xy"
+    },
+    "threeHumpCamel": {
+      "name": "Three-Hump Camel",
+      "description": "f(x,y) = 2x² - 1.05x⁴ + x⁶/6 + xy + y²"
+    },
+    "sphere": {
+      "name": "Sphere",
+      "description": "f(x,y) = x² + y²"
+    },
+    "levi": {
+      "name": "Lévi N.13",
+      "description": "f(x,y) = sin²(3πx) + (x-1)²(1+sin²(3πy)) + (y-1)²(1+sin²(2πy))"
+    },
+    "rastrigin": {
+      "name": "Rastrigin",
+      "description": "f(x,y) = 20 + x² - 10cos(2πx) + y² - 10cos(2πy)"
+    },
+    "ackley": {
+      "name": "Ackley",
+      "description": "f(x,y) = -20exp(-0.2√(0.5(x²+y²))) - exp(0.5(cos2πx+cos2πy)) + e + 20"
+    },
+    "goldsteinPrice": {
+      "name": "Goldstein-Price",
+      "description": "Complex polynomial with minimum at (0, -1)"
+    },
+    "easom": {
+      "name": "Easom",
+      "description": "f(x,y) = -cos(x)cos(y)exp(-((x-π)²+(y-π)²))"
+    },
+    "styblinskiTang": {
+      "name": "Styblinski-Tang",
+      "description": "f(x,y) = 0.5[(x⁴-16x²+5x) + (y⁴-16y²+5y)]"
     }
   },
   "optimizers": {
