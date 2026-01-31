@@ -1,53 +1,43 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import type { ObjectiveFunction } from '@/core/functions/types.ts';
 import type { OptimizationResult } from '@/core/optimizers/types.ts';
 import { allOptimizers } from '@/core/optimizers/index.ts';
 
-interface UseOptimizationOptions {
+interface UseOptimizationParams {
+  readonly func: ObjectiveFunction;
+  readonly startPoint: readonly [number, number];
+  readonly optimizerIds: readonly string[];
   readonly maxIterations?: number;
   readonly tolerance?: number;
 }
 
-export const useOptimization = (options: UseOptimizationOptions = {}) => {
-  const { maxIterations = 100, tolerance = 1e-6 } = options;
+export const useOptimization = ({
+  func,
+  startPoint,
+  optimizerIds,
+  maxIterations = 100,
+  tolerance = 1e-6,
+}: UseOptimizationParams) => {
+  const results = useMemo(() => {
+    if (optimizerIds.length === 0) {
+      return new Map<string, OptimizationResult>();
+    }
 
-  const [results, setResults] = useState<ReadonlyMap<string, OptimizationResult>>(
-    new Map(),
-  );
-  const [isRunning, setIsRunning] = useState(false);
+    const newResults = new Map<string, OptimizationResult>();
 
-  const runOptimization = useCallback(
-    (
-      func: ObjectiveFunction,
-      startPoint: readonly [number, number],
-      optimizerIds: readonly string[],
-    ) => {
-      setIsRunning(true);
-
-      const newResults = new Map<string, OptimizationResult>();
-
-      for (const id of optimizerIds) {
-        const optimizer = allOptimizers.find((o) => o.id === id);
-        if (optimizer) {
-          const result = optimizer.optimize(func, [...startPoint], {
-            maxIterations,
-            tolerance,
-          });
-          newResults.set(id, result);
-        }
+    for (const id of optimizerIds) {
+      const optimizer = allOptimizers.find((o) => o.id === id);
+      if (optimizer) {
+        const result = optimizer.optimize(func, [...startPoint], {
+          maxIterations,
+          tolerance,
+        });
+        newResults.set(id, result);
       }
+    }
 
-      setResults(newResults);
-      setIsRunning(false);
-
-      return newResults;
-    },
-    [maxIterations, tolerance],
-  );
-
-  const clearResults = useCallback(() => {
-    setResults(new Map());
-  }, []);
+    return newResults;
+  }, [func, startPoint, optimizerIds, maxIterations, tolerance]);
 
   const maxIterationCount = useMemo(() => {
     let max = 0;
@@ -59,9 +49,6 @@ export const useOptimization = (options: UseOptimizationOptions = {}) => {
 
   return {
     results,
-    isRunning,
-    runOptimization,
-    clearResults,
     maxIterationCount,
   };
 };

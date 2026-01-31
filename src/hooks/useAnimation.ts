@@ -6,11 +6,14 @@ interface UseAnimationOptions {
 }
 
 export const useAnimation = ({ maxIteration, initialSpeed = 1 }: UseAnimationOptions) => {
-  const [currentIteration, setCurrentIteration] = useState(0);
+  const [rawIteration, setRawIteration] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [speed, setSpeed] = useState(initialSpeed);
   const animationRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number>(0);
+
+  // Derive clamped iteration - no useEffect needed
+  const currentIteration = Math.min(rawIteration, maxIteration);
 
   const play = useCallback(() => {
     setIsPlaying(true);
@@ -25,13 +28,13 @@ export const useAnimation = ({ maxIteration, initialSpeed = 1 }: UseAnimationOpt
   }, []);
 
   const reset = useCallback(() => {
-    setCurrentIteration(0);
+    setRawIteration(0);
     setIsPlaying(false);
   }, []);
 
   const goToIteration = useCallback((iteration: number) => {
-    setCurrentIteration(Math.max(0, Math.min(iteration, maxIteration)));
-  }, [maxIteration]);
+    setRawIteration(Math.max(0, iteration));
+  }, []);
 
   useEffect(() => {
     if (!isPlaying) {
@@ -51,12 +54,13 @@ export const useAnimation = ({ maxIteration, initialSpeed = 1 }: UseAnimationOpt
       const interval = 500 / speed; // Base interval of 500ms, adjusted by speed
 
       if (deltaTime >= interval) {
-        setCurrentIteration((prev) => {
-          if (prev >= maxIteration) {
+        setRawIteration((prev) => {
+          const next = prev + 1;
+          if (next >= maxIteration) {
             setIsPlaying(false);
-            return prev;
+            return maxIteration;
           }
-          return prev + 1;
+          return next;
         });
         lastTimeRef.current = time;
       }
@@ -73,11 +77,6 @@ export const useAnimation = ({ maxIteration, initialSpeed = 1 }: UseAnimationOpt
       }
     };
   }, [isPlaying, speed, maxIteration]);
-
-  // Reset iteration when maxIteration changes
-  useEffect(() => {
-    setCurrentIteration((prev) => Math.min(prev, maxIteration));
-  }, [maxIteration]);
 
   return {
     currentIteration,

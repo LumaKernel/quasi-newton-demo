@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ObjectiveFunction } from '@/core/functions/types.ts';
 import type { OptimizerInfo } from '@/core/optimizers/types.ts';
@@ -30,7 +30,12 @@ const App = () => {
   );
   const [viewMode, setViewMode] = useState<ViewMode>('2d');
 
-  const { results, runOptimization, maxIterationCount } = useOptimization();
+  // Optimization results are derived from parameters - no useEffect needed
+  const { results, maxIterationCount } = useOptimization({
+    func: selectedFunction,
+    startPoint,
+    optimizerIds: selectedAlgorithms,
+  });
 
   const {
     currentIteration,
@@ -61,14 +66,6 @@ const App = () => {
     },
     [],
   );
-
-  // Auto-run optimization when parameters change
-  useEffect(() => {
-    if (selectedAlgorithms.length > 0) {
-      runOptimization(selectedFunction, startPoint, selectedAlgorithms);
-      reset();
-    }
-  }, [selectedFunction, startPoint, selectedAlgorithms, runOptimization, reset]);
 
   // Get the first quasi-Newton result for Hessian comparison
   const quasiNewtonResult = useMemo(() => {
