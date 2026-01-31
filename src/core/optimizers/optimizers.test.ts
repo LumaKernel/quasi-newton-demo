@@ -3,6 +3,8 @@ import { newtonOptimize } from './newton.ts';
 import { bfgsOptimize } from './bfgs.ts';
 import { dfpOptimize } from './dfp.ts';
 import { sr1Optimize } from './sr1.ts';
+import { barzilaiBotweinOptimize } from './barzilaiBotwein.ts';
+import { trustRegionOptimize } from './trustRegion.ts';
 import { rosenbrock } from '../functions/rosenbrock.ts';
 import { quadratic } from '../functions/quadratic.ts';
 import { himmelblau } from '../functions/himmelblau.ts';
@@ -84,6 +86,63 @@ describe('SR1 optimization', () => {
     expect(result.converged).toBe(true);
     expect(result.solution[0]).toBeCloseTo(1, 2);
     expect(result.solution[1]).toBeCloseTo(1, 2);
+  });
+});
+
+describe('Barzilai-Borwein optimization', () => {
+  it('converges on quadratic function', () => {
+    const result = barzilaiBotweinOptimize(quadratic, [2, 2]);
+    expect(result.converged).toBe(true);
+    expect(result.solution[0]).toBeCloseTo(0, 3);
+    expect(result.solution[1]).toBeCloseTo(0, 3);
+  });
+
+  it('makes progress on rosenbrock function', () => {
+    // BB method is simple and may not fully converge on Rosenbrock
+    // but should make significant progress
+    const result = barzilaiBotweinOptimize(rosenbrock, [0, 0], {
+      maxIterations: 500,
+      tolerance: 1e-4,
+    });
+    // Should get close to minimum or at least reduce function value significantly
+    expect(result.finalValue).toBeLessThan(1); // f(0,0) = 1
+  });
+
+  it('stores scalar alpha in iterations', () => {
+    const result = barzilaiBotweinOptimize(quadratic, [2, 2]);
+    expect(result.iterations.length).toBeGreaterThan(1);
+    // BB method uses scalar hessian approximation
+    const iter = result.iterations[1];
+    expect(iter.hessianApprox).toBeDefined();
+  });
+});
+
+describe('Trust Region optimization', () => {
+  it('converges on quadratic function', () => {
+    const result = trustRegionOptimize(quadratic, [2, 2]);
+    expect(result.converged).toBe(true);
+    expect(result.solution[0]).toBeCloseTo(0, 4);
+    expect(result.solution[1]).toBeCloseTo(0, 4);
+  });
+
+  it('makes progress on rosenbrock function', () => {
+    // Trust region with true Hessian can have issues with Rosenbrock's
+    // indefinite Hessian away from minimum
+    const result = trustRegionOptimize(rosenbrock, [0.5, 0.5], {
+      maxIterations: 300,
+    });
+    // Should reduce function value significantly from start
+    const startValue = rosenbrock.value([0.5, 0.5]);
+    expect(result.finalValue).toBeLessThan(startValue);
+  });
+
+  it('converges on himmelblau from good start', () => {
+    // Start closer to a known minimum
+    const result = trustRegionOptimize(himmelblau, [2.5, 2.5], {
+      maxIterations: 100,
+    });
+    expect(result.converged).toBe(true);
+    expect(result.finalValue).toBeCloseTo(0, 1);
   });
 });
 

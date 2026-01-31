@@ -3,6 +3,13 @@ import { rosenbrock } from './rosenbrock.ts';
 import { himmelblau } from './himmelblau.ts';
 import { quadratic } from './quadratic.ts';
 import { beale } from './beale.ts';
+import { mccormick } from './mccormick.ts';
+import { sixHumpCamel } from './sixHumpCamel.ts';
+import { branin } from './branin.ts';
+import { booth } from './booth.ts';
+import { matyas } from './matyas.ts';
+import { dropWave } from './dropWave.ts';
+import { allFunctions } from './index.ts';
 
 describe('objective functions', () => {
   describe('rosenbrock', () => {
@@ -118,4 +125,87 @@ describe('gradient verification (numerical)', () => {
     expect(analytical[0]).toBeCloseTo(numerical[0], 4);
     expect(analytical[1]).toBeCloseTo(numerical[1], 4);
   });
+
+  it('mccormick gradient matches numerical gradient', () => {
+    const x = [0.5, -0.5];
+    const analytical = mccormick.gradient(x);
+    const numerical = numericalGradient(mccormick.value, x);
+    expect(analytical[0]).toBeCloseTo(numerical[0], 4);
+    expect(analytical[1]).toBeCloseTo(numerical[1], 4);
+  });
+
+  it('sixHumpCamel gradient matches numerical gradient', () => {
+    const x = [0.5, 0.3];
+    const analytical = sixHumpCamel.gradient(x);
+    const numerical = numericalGradient(sixHumpCamel.value, x);
+    expect(analytical[0]).toBeCloseTo(numerical[0], 4);
+    expect(analytical[1]).toBeCloseTo(numerical[1], 4);
+  });
+
+  it('branin gradient matches numerical gradient', () => {
+    const x = [2.0, 5.0];
+    const analytical = branin.gradient(x);
+    const numerical = numericalGradient(branin.value, x);
+    expect(analytical[0]).toBeCloseTo(numerical[0], 4);
+    expect(analytical[1]).toBeCloseTo(numerical[1], 4);
+  });
+
+  it('booth gradient matches numerical gradient', () => {
+    const x = [2.0, 1.0];
+    const analytical = booth.gradient(x);
+    const numerical = numericalGradient(booth.value, x);
+    expect(analytical[0]).toBeCloseTo(numerical[0], 4);
+    expect(analytical[1]).toBeCloseTo(numerical[1], 4);
+  });
+
+  it('matyas gradient matches numerical gradient', () => {
+    const x = [3.0, -2.0];
+    const analytical = matyas.gradient(x);
+    const numerical = numericalGradient(matyas.value, x);
+    expect(analytical[0]).toBeCloseTo(numerical[0], 4);
+    expect(analytical[1]).toBeCloseTo(numerical[1], 4);
+  });
+
+  it('dropWave gradient matches numerical gradient', () => {
+    const x = [1.0, 1.0];
+    const analytical = dropWave.gradient(x);
+    const numerical = numericalGradient(dropWave.value, x);
+    expect(analytical[0]).toBeCloseTo(numerical[0], 4);
+    expect(analytical[1]).toBeCloseTo(numerical[1], 4);
+  });
+});
+
+describe('all functions have required properties', () => {
+  it.each(allFunctions.map((f) => [f.id, f]))(
+    '%s has valid structure',
+    (_, func) => {
+      expect(func.id).toBeTruthy();
+      expect(func.name).toBeTruthy();
+      expect(func.dimension).toBe(2);
+      expect(func.bounds).toHaveLength(4);
+      expect(func.defaultStart).toHaveLength(2);
+      expect(func.minima.length).toBeGreaterThan(0);
+      expect(typeof func.value).toBe('function');
+      expect(typeof func.gradient).toBe('function');
+      expect(typeof func.hessian).toBe('function');
+    },
+  );
+
+  it.each(allFunctions.map((f) => [f.id, f]))(
+    '%s returns finite values at default start',
+    (_, func) => {
+      const val = func.value(func.defaultStart);
+      expect(Number.isFinite(val)).toBe(true);
+
+      const grad = func.gradient(func.defaultStart);
+      expect(grad).toHaveLength(2);
+      expect(Number.isFinite(grad[0])).toBe(true);
+      expect(Number.isFinite(grad[1])).toBe(true);
+
+      const hess = func.hessian(func.defaultStart);
+      expect(hess).toHaveLength(2);
+      expect(hess[0]).toHaveLength(2);
+      expect(Number.isFinite(hess[0][0])).toBe(true);
+    },
+  );
 });
