@@ -30,6 +30,25 @@
   opacity: 0.9;
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.githubLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  opacity: 0.8;
+  transition: opacity 0.15s ease;
+}
+
+.githubLink:hover {
+  opacity: 1;
+}
+
 .main {
   padding: 24px 32px;
   max-width: 1600px;
