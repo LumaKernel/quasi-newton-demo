@@ -1,0 +1,122 @@
+.container {
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.empty {
+  padding: 24px;
+  text-align: center;
+  color: #666;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.title {
+  margin: 0 0 16px;
+  font-size: 16px;
+  color: #333;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr 1fr;
+  gap: 12px;
+  padding: 8px 12px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr 1fr;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  align-items: center;
+}
+
+.algorithmName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.colorDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.value {
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 13px;
+}
+
+.status {
+  font-size: 16px;
+  text-align: center;
+}
+
+.converged {
+  color: #27ae60;
+}
+
+.notConverged {
+  color: #e74c3c;
+}
+
+.stats {
+  border-top: 1px solid #eee;
+  padding-top: 16px;
+}
+
+.stats h4 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: #333;
+}
+
+.statBlock {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 4px;
+}
+
+.statHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  font-size: 12px;
+}
+
+.statGrid span:nth-child(odd) {
+  color: #666;
+}
+
+.statGrid span:nth-child(even) {
+  font-family: 'Monaco', 'Consolas', monospace;
+}

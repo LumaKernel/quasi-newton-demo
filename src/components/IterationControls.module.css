@@ -1,0 +1,104 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.button {
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 8px;
+  background: #f0f0f0;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.button:hover:not(:disabled) {
+  background: #e0e0e0;
+}
+
+.button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.playButton {
+  background: #3498db;
+  color: #fff;
+}
+
+.playButton:hover {
+  background: #2980b9;
+}
+
+.sliderContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sliderLabel {
+  font-size: 13px;
+  color: #666;
+  text-align: center;
+}
+
+.slider {
+  width: 100%;
+  height: 6px;
+  appearance: none;
+  background: #e0e0e0;
+  border-radius: 3px;
+  outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #3498db;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.speedContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.speedLabel {
+  font-size: 12px;
+  color: #666;
+  min-width: 70px;
+}
+
+.speedSlider {
+  flex: 1;
+  height: 4px;
+  appearance: none;
+  background: #e0e0e0;
+  border-radius: 2px;
+  outline: none;
+}
+
+.speedSlider::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: #666;
+  border-radius: 50%;
+  cursor: pointer;
+}

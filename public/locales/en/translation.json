@@ -1,0 +1,118 @@
+{
+  "app": {
+    "title": "Quasi-Newton Method Visualization",
+    "subtitle": "Interactive comparison of optimization algorithms",
+    "footer": "Built with React, D3.js, and TypeScript. Explore how quasi-Newton methods approximate the Hessian matrix."
+  },
+  "controls": {
+    "objectiveFunction": "Objective Function",
+    "algorithms": "Algorithms",
+    "startPoint": "Start Point",
+    "startPointHint": "Or click on the plot to set start point",
+    "runOptimization": "Run Optimization",
+    "trueHessian": "True Hessian"
+  },
+  "iteration": {
+    "title": "Iteration: {{current}} / {{max}}",
+    "speed": "Speed: {{speed}}x",
+    "reset": "Reset",
+    "previous": "Previous",
+    "play": "Play",
+    "pause": "Pause",
+    "next": "Next"
+  },
+  "visualization": {
+    "optimizationPath": "Optimization Path"
+  },
+  "comparison": {
+    "title": "Algorithm Comparison",
+    "empty": "Select algorithms and click on the plot to set a starting point.",
+    "algorithm": "Algorithm",
+    "iterations": "Iterations",
+    "finalValue": "Final Value",
+    "converged": "Converged",
+    "detailedStats": "Detailed Statistics",
+    "solution": "Solution",
+    "gradientNorm": "Gradient Norm",
+    "functionEvals": "Function Evals",
+    "gradientEvals": "Gradient Evals"
+  },
+  "hessian": {
+    "title": "Iteration {{iteration}}: Hessian Comparison",
+    "trueHessian": "True Hessian H",
+    "trueInverse": "True H⁻¹",
+    "approxInverse": "Approx H⁻¹ (Bₖ)",
+    "error": "Error (Bₖ - H⁻¹)",
+    "frobeniusError": "Frobenius Error",
+    "relativeError": "Relative Error",
+    "explanation": {
+      "trueHessian": "The exact second-order derivatives of the objective function.",
+      "approxInverse": "The quasi-Newton approximation to the inverse Hessian, built incrementally using gradient information.",
+      "convergence": "As iterations progress, quasi-Newton methods (BFGS, DFP, SR1) improve their approximation of the inverse Hessian, leading to faster convergence near the optimum."
+    }
+  },
+  "explanation": {
+    "title": "Understanding Quasi-Newton Methods",
+    "newton": {
+      "title": "Newton's Method",
+      "description": "Uses the exact Hessian matrix H(x) to compute the search direction: d = -H⁻¹∇f. Provides quadratic convergence but requires computing and inverting the Hessian at each step."
+    },
+    "bfgs": {
+      "title": "BFGS",
+      "description": "Builds an approximation Bₖ to the inverse Hessian using only gradient information. Updates the approximation to satisfy the secant condition: Bₖ₊₁yₖ = sₖ."
+    },
+    "dfp": {
+      "title": "DFP",
+      "description": "The first quasi-Newton method, proposed by Davidon and later developed by Fletcher and Powell. Uses a different update formula than BFGS but achieves similar results."
+    },
+    "sr1": {
+      "title": "SR1 (Symmetric Rank-1)",
+      "description": "Uses a rank-1 update that can capture negative curvature. Can exactly reconstruct the Hessian for quadratic functions in n steps, but doesn't guarantee positive definiteness."
+    }
+  },
+  "functions": {
+    "rosenbrock": {
+      "name": "Rosenbrock",
+      "description": "f(x,y) = (1 - x)² + 100(y - x²)²"
+    },
+    "himmelblau": {
+      "name": "Himmelblau",
+      "description": "f(x,y) = (x² + y - 11)² + (x + y² - 7)²"
+    },
+    "quadratic": {
+      "name": "Quadratic",
+      "description": "f(x,y) = ½(4x² + 2xy + 2y²)"
+    },
+    "illConditionedQuadratic": {
+      "name": "Ill-conditioned Quadratic",
+      "description": "f(x,y) = ½(100x² + y²)"
+    },
+    "beale": {
+      "name": "Beale",
+      "description": "f(x,y) = (1.5 - x + xy)² + (2.25 - x + xy²)² + (2.625 - x + xy³)²"
+    }
+  },
+  "optimizers": {
+    "newton": {
+      "name": "Newton's Method",
+      "description": "Uses true Hessian matrix for quadratic convergence"
+    },
+    "bfgs": {
+      "name": "BFGS",
+      "description": "Broyden-Fletcher-Goldfarb-Shanno quasi-Newton method"
+    },
+    "dfp": {
+      "name": "DFP",
+      "description": "Davidon-Fletcher-Powell quasi-Newton method"
+    },
+    "sr1": {
+      "name": "SR1",
+      "description": "Symmetric Rank-1 quasi-Newton method"
+    }
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "ja": "Japanese"
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "app": {
+    "title": "準ニュートン法の可視化",
+    "subtitle": "最適化アルゴリズムのインタラクティブな比較",
+    "footer": "React、D3.js、TypeScriptで構築。準ニュートン法がヘッセ行列をどのように近似するかを探索できます。"
+  },
+  "controls": {
+    "objectiveFunction": "目的関数",
+    "algorithms": "アルゴリズム",
+    "startPoint": "開始点",
+    "startPointHint": "またはプロット上をクリックして開始点を設定",
+    "runOptimization": "最適化を実行",
+    "trueHessian": "真のヘッセ行列"
+  },
+  "iteration": {
+    "title": "イテレーション: {{current}} / {{max}}",
+    "speed": "速度: {{speed}}x",
+    "reset": "リセット",
+    "previous": "前へ",
+    "play": "再生",
+    "pause": "一時停止",
+    "next": "次へ"
+  },
+  "visualization": {
+    "optimizationPath": "最適化パス"
+  },
+  "comparison": {
+    "title": "アルゴリズム比較",
+    "empty": "アルゴリズムを選択し、プロット上をクリックして開始点を設定してください。",
+    "algorithm": "アルゴリズム",
+    "iterations": "イテレーション数",
+    "finalValue": "最終値",
+    "converged": "収束",
+    "detailedStats": "詳細統計",
+    "solution": "解",
+    "gradientNorm": "勾配ノルム",
+    "functionEvals": "関数評価回数",
+    "gradientEvals": "勾配評価回数"
+  },
+  "hessian": {
+    "title": "イテレーション {{iteration}}: ヘッセ行列の比較",
+    "trueHessian": "真のヘッセ行列 H",
+    "trueInverse": "真の H⁻¹",
+    "approxInverse": "近似 H⁻¹ (Bₖ)",
+    "error": "誤差 (Bₖ - H⁻¹)",
+    "frobeniusError": "フロベニウス誤差",
+    "relativeError": "相対誤差",
+    "explanation": {
+      "trueHessian": "目的関数の正確な2次偏微分係数。",
+      "approxInverse": "勾配情報を使って逐次的に構築される、逆ヘッセ行列の準ニュートン近似。",
+      "convergence": "イテレーションが進むにつれて、準ニュートン法（BFGS、DFP、SR1）は逆ヘッセ行列の近似を改善し、最適解付近でより速い収束をもたらします。"
+    }
+  },
+  "explanation": {
+    "title": "準ニュートン法の理解",
+    "newton": {
+      "title": "ニュートン法",
+      "description": "正確なヘッセ行列 H(x) を使用して探索方向を計算：d = -H⁻¹∇f。2次収束を実現しますが、各ステップでヘッセ行列の計算と逆行列の計算が必要です。"
+    },
+    "bfgs": {
+      "title": "BFGS",
+      "description": "勾配情報のみを使用して逆ヘッセ行列の近似 Bₖ を構築します。セカント条件 Bₖ₊₁yₖ = sₖ を満たすように近似を更新します。"
+    },
+    "dfp": {
+      "title": "DFP",
+      "description": "最初の準ニュートン法で、Davidon が提案し、後に Fletcher と Powell によって発展されました。BFGS とは異なる更新公式を使用しますが、同様の結果を達成します。"
+    },
+    "sr1": {
+      "title": "SR1（対称ランク1更新）",
+      "description": "負の曲率を捉えることができるランク1更新を使用します。2次関数に対しては n ステップでヘッセ行列を正確に再構築できますが、正定値性は保証されません。"
+    }
+  },
+  "functions": {
+    "rosenbrock": {
+      "name": "Rosenbrock関数",
+      "description": "f(x,y) = (1 - x)² + 100(y - x²)²"
+    },
+    "himmelblau": {
+      "name": "Himmelblau関数",
+      "description": "f(x,y) = (x² + y - 11)² + (x + y² - 7)²"
+    },
+    "quadratic": {
+      "name": "2次関数",
+      "description": "f(x,y) = ½(4x² + 2xy + 2y²)"
+    },
+    "illConditionedQuadratic": {
+      "name": "悪条件2次関数",
+      "description": "f(x,y) = ½(100x² + y²)"
+    },
+    "beale": {
+      "name": "Beale関数",
+      "description": "f(x,y) = (1.5 - x + xy)² + (2.25 - x + xy²)² + (2.625 - x + xy³)²"
+    }
+  },
+  "optimizers": {
+    "newton": {
+      "name": "ニュートン法",
+      "description": "2次収束のために真のヘッセ行列を使用"
+    },
+    "bfgs": {
+      "name": "BFGS",
+      "description": "Broyden-Fletcher-Goldfarb-Shanno 準ニュートン法"
+    },
+    "dfp": {
+      "name": "DFP",
+      "description": "Davidon-Fletcher-Powell 準ニュートン法"
+    },
+    "sr1": {
+      "name": "SR1",
+      "description": "対称ランク1 準ニュートン法"
+    }
+  },
+  "language": {
+    "label": "言語",
+    "en": "英語",
+    "ja": "日本語"
+  }
+}

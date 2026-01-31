@@ -1,0 +1,229 @@
+.app {
+  min-height: 100vh;
+  background: #f5f7fa;
+  color: #333;
+}
+
+.header {
+  padding: 24px 32px;
+  background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+  color: #fff;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.header h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.header p {
+  margin: 0;
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+.main {
+  padding: 24px 32px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.startPoint {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.startPoint label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.pointInputs {
+  display: flex;
+  gap: 8px;
+}
+
+.pointInputs input {
+  width: 80px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: 'Monaco', 'Consolas', monospace;
+}
+
+.pointInputs input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.hint {
+  margin: 0;
+  font-size: 11px;
+  color: #888;
+}
+
+.runButton {
+  align-self: flex-end;
+  padding: 12px 24px;
+  background: #27ae60;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.runButton:hover {
+  background: #219a52;
+}
+
+.visualization {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1200px) {
+  .visualization {
+    grid-template-columns: 1fr;
+  }
+}
+
+.plotContainer {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.plotContainer h2 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  color: #333;
+}
+
+.plotWrapper {
+  margin-bottom: 24px;
+}
+
+.plotHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.colorDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.sidePanel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.explanation {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.explanation h2 {
+  margin: 0 0 20px;
+  font-size: 20px;
+  color: #333;
+}
+
+.explanationContent {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.explanationCard {
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #3498db;
+}
+
+.explanationCard:nth-child(1) {
+  border-left-color: #e74c3c;
+}
+
+.explanationCard:nth-child(2) {
+  border-left-color: #3498db;
+}
+
+.explanationCard:nth-child(3) {
+  border-left-color: #27ae60;
+}
+
+.explanationCard:nth-child(4) {
+  border-left-color: #9b59b6;
+}
+
+.explanationCard h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: #333;
+}
+
+.explanationCard p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.explanationCard code {
+  background: #e8e8e8;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 12px;
+}
+
+.footer {
+  padding: 20px 32px;
+  background: #2c3e50;
+  color: #aaa;
+  text-align: center;
+}
+
+.footer p {
+  margin: 0;
+  font-size: 13px;
+}
