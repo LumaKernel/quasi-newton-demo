@@ -203,6 +203,14 @@ DONE
 
 GitHubリンクはなにかアイコンとかでないのかな。なにも見えないけれど。
 DONE
+全然だめそう。ちょっと一旦そこらへん全部消して、まっさらにやりなおしてくれない?
+DONE
+GitHubリンクはアイコンにしよう。
+DONE
+なんでsvgにbackgroundついてる?
+DONE
+background: #fafafa; ってのがついてる。
+DONE
 
 
 Occasionally:
