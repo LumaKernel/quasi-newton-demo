@@ -98,8 +98,26 @@ export const ConvergenceCharts = ({
       .call(d3.axisBottom(xScale).ticks(5).tickFormat(d3.format('d')))
       .attr('font-size', '10px');
 
+    // For log scale, compute explicit tick values to avoid duplicates
+    const yAxis = d3.axisLeft(yScale);
+    if (useLogScale) {
+      // Generate log-spaced tick values
+      const logMin = Math.log10(yMin);
+      const logMax = Math.log10(yMax);
+      const logRange = logMax - logMin;
+      const numTicks = Math.min(5, Math.max(2, Math.ceil(logRange)));
+      const tickValues: number[] = [];
+      for (let i = 0; i <= numTicks; i++) {
+        const logVal = logMin + (i / numTicks) * logRange;
+        tickValues.push(Math.pow(10, logVal));
+      }
+      yAxis.tickValues(tickValues);
+    } else {
+      yAxis.ticks(4);
+    }
+
     g.append('g')
-      .call(d3.axisLeft(yScale).ticks(4).tickFormat((d) => {
+      .call(yAxis.tickFormat((d) => {
         const val = d as number;
         if (Math.abs(val) < 0.001 || Math.abs(val) >= 10000) {
           return val.toExponential(1);

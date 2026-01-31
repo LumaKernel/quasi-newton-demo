@@ -157,4 +157,8 @@ DONE
 DONE
 
 
+勾配ノルム ||∇f|| (log)のグラフプロット(解析)において、同じ縦軸のメモリが大量に表示されることがある
+DONE
+
+
 check/review test/stories/coverage again now.
