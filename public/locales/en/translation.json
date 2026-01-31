@@ -22,7 +22,11 @@
     "next": "Next"
   },
   "visualization": {
-    "optimizationPath": "Optimization Path"
+    "optimizationPath": "Optimization Path",
+    "viewMode": "View Mode",
+    "view2D": "2D Contour",
+    "view3D": "3D Surface",
+    "resetCamera": "Reset Camera"
   },
   "comparison": {
     "title": "Algorithm Comparison",

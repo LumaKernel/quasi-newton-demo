@@ -22,7 +22,11 @@
     "next": "次へ"
   },
   "visualization": {
-    "optimizationPath": "最適化パス"
+    "optimizationPath": "最適化パス",
+    "viewMode": "表示モード",
+    "view2D": "2D 等高線",
+    "view3D": "3D サーフェス",
+    "resetCamera": "カメラリセット"
   },
   "comparison": {
     "title": "アルゴリズム比較",

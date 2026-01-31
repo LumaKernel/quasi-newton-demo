@@ -5,16 +5,20 @@ import type { OptimizerInfo } from '@/core/optimizers/types.ts';
 import { rosenbrock } from '@/core/functions/index.ts';
 import { ContourPlot } from '@/visualization/ContourPlot.tsx';
 import { MatrixComparison } from '@/visualization/MatrixComparison.tsx';
+import { SurfacePlot3D } from '@/visualization/SurfacePlot3D/index.ts';
 import {
   FunctionSelector,
   AlgorithmSelector,
   IterationControls,
   ComparisonPanel,
   LanguageSwitcher,
+  ViewModeToggle,
   algorithmColors,
 } from '@/components/index.ts';
 import { useOptimization, useAnimation } from '@/hooks/index.ts';
 import styles from './App.module.css';
+
+type ViewMode = '2d' | '3d';
 
 const App = () => {
   const { t } = useTranslation();
@@ -23,6 +27,7 @@ const App = () => {
   const [startPoint, setStartPoint] = useState<readonly [number, number]>(
     selectedFunction.defaultStart as [number, number],
   );
+  const [viewMode, setViewMode] = useState<ViewMode>('2d');
 
   const { results, runOptimization, maxIterationCount } = useOptimization();
 
@@ -107,6 +112,8 @@ const App = () => {
             onToggle={handleAlgorithmToggle}
           />
 
+          <ViewModeToggle value={viewMode} onChange={setViewMode} />
+
           <div className={styles.startPoint}>
             <label>{t('controls.startPoint')}</label>
             <div className={styles.pointInputs}>
@@ -151,39 +158,76 @@ const App = () => {
         <section className={styles.visualization}>
           <div className={styles.plotContainer}>
             <h2>{t('visualization.optimizationPath')}</h2>
-            {selectedAlgorithms.length > 0 && results.size > 0 ? (
-              selectedAlgorithms.map((algId) => {
-                const result = results.get(algId);
-                if (!result) return null;
-                return (
-                  <div key={algId} className={styles.plotWrapper}>
-                    <div className={styles.plotHeader}>
-                      <span
-                        className={styles.colorDot}
-                        style={{ background: algorithmColors[algId] }}
+            {viewMode === '2d' ? (
+              // 2D Contour View
+              selectedAlgorithms.length > 0 && results.size > 0 ? (
+                selectedAlgorithms.map((algId) => {
+                  const result = results.get(algId);
+                  if (!result) return null;
+                  return (
+                    <div key={algId} className={styles.plotWrapper}>
+                      <div className={styles.plotHeader}>
+                        <span
+                          className={styles.colorDot}
+                          style={{ background: algorithmColors[algId] }}
+                        />
+                        {algId.toUpperCase()}
+                      </div>
+                      <ContourPlot
+                        func={selectedFunction}
+                        iterations={result.iterations}
+                        currentIteration={currentIteration}
+                        width={450}
+                        height={400}
+                        onStartPointChange={handleStartPointChange}
                       />
-                      {algId.toUpperCase()}
                     </div>
-                    <ContourPlot
-                      func={selectedFunction}
-                      iterations={result.iterations}
-                      currentIteration={currentIteration}
-                      width={450}
-                      height={400}
-                      onStartPointChange={handleStartPointChange}
-                    />
-                  </div>
-                );
-              })
+                  );
+                })
+              ) : (
+                <ContourPlot
+                  func={selectedFunction}
+                  iterations={[]}
+                  currentIteration={0}
+                  width={450}
+                  height={400}
+                  onStartPointChange={handleStartPointChange}
+                />
+              )
             ) : (
-              <ContourPlot
-                func={selectedFunction}
-                iterations={[]}
-                currentIteration={0}
-                width={450}
-                height={400}
-                onStartPointChange={handleStartPointChange}
-              />
+              // 3D Surface View
+              selectedAlgorithms.length > 0 && results.size > 0 ? (
+                selectedAlgorithms.map((algId) => {
+                  const result = results.get(algId);
+                  if (!result) return null;
+                  return (
+                    <div key={algId} className={styles.plotWrapper}>
+                      <div className={styles.plotHeader}>
+                        <span
+                          className={styles.colorDot}
+                          style={{ background: algorithmColors[algId] }}
+                        />
+                        {algId.toUpperCase()}
+                      </div>
+                      <SurfacePlot3D
+                        func={selectedFunction}
+                        iterations={result.iterations}
+                        currentIteration={currentIteration}
+                        width={450}
+                        height={400}
+                      />
+                    </div>
+                  );
+                })
+              ) : (
+                <SurfacePlot3D
+                  func={selectedFunction}
+                  iterations={[]}
+                  currentIteration={0}
+                  width={450}
+                  height={400}
+                />
+              )
             )}
           </div>
 
