@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { InlineMath, BlockMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
 import type { IterationState } from '@/core/optimizers/types.ts';
+import { Tooltip } from '@/components/Tooltip.tsx';
 import styles from './StepDetails.module.css';
 
 interface StepDetailsProps {
@@ -256,12 +257,7 @@ export const StepDetails = ({
                   ? formatNumber(currentState.alpha, 6)
                   : '-'}
               </code>
-              <span
-                className={styles.tooltip}
-                data-tooltip={t('stepDetails.alphaDesc')}
-              >
-                ?
-              </span>
+              <Tooltip content={t('stepDetails.alphaDesc')}>?</Tooltip>
             </div>
           </>
         )}

@@ -86,4 +86,8 @@ GitHubに飛べるようにしておいて。
 DONE
 
 
+?をホバーしたときのヒントが、横幅がせまい。包含するコンテナに制限されてしまっていそうだ。
+DONE
+
+
 check/review test/stories/coverage again now.
