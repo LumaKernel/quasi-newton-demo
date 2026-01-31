@@ -2,6 +2,7 @@ import { useRef, useEffect, useMemo } from 'react';
 import * as d3 from 'd3';
 import type { ObjectiveFunction } from '@/core/functions/types.ts';
 import type { IterationState } from '@/core/optimizers/types.ts';
+import { useVisualization } from '@/contexts/index.ts';
 
 interface ContourPlotProps {
   readonly func: ObjectiveFunction;
@@ -74,6 +75,8 @@ export const ContourPlot = ({
   onStartPointChange,
 }: ContourPlotProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
+  const overlayRef = useRef<SVGGElement>(null);
+  const { activeOverlay } = useVisualization();
   const margin = { top: 20, right: 20, bottom: 40, left: 50 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
@@ -276,12 +279,189 @@ export const ContourPlot = ({
     onStartPointChange,
   ]);
 
+  // Render overlay based on hover state
+  useEffect(() => {
+    if (!overlayRef.current) return;
+    const overlay = d3.select(overlayRef.current);
+    overlay.selectAll('*').remove();
+
+    if (!activeOverlay) return;
+
+    const { type, currentPoint, gradient, direction, nextPoint, trustRegionRadius } = activeOverlay;
+
+    const cx = xScale(currentPoint[0]);
+    const cy = yScale(currentPoint[1]);
+
+    // Scale factor for vectors (adaptive based on bounds)
+    const rangeX = xMax - xMin;
+    const rangeY = yMax - yMin;
+    const vectorScale = Math.min(innerWidth / rangeX, innerHeight / rangeY) * 0.15;
+
+    // Draw gradient vector (always shown with gradient overlay)
+    if ((type === 'gradient' || type === 'direction') && gradient) {
+      const gradLen = Math.sqrt(gradient[0] ** 2 + gradient[1] ** 2);
+      if (gradLen > 0.001) {
+        const normGrad = [gradient[0] / gradLen, gradient[1] / gradLen];
+        const arrowLen = Math.min(gradLen * vectorScale, 80);
+
+        overlay
+          .append('line')
+          .attr('x1', cx)
+          .attr('y1', cy)
+          .attr('x2', cx + normGrad[0] * arrowLen)
+          .attr('y2', cy - normGrad[1] * arrowLen)
+          .attr('stroke', '#e74c3c')
+          .attr('stroke-width', 3)
+          .attr('stroke-opacity', 0.9)
+          .attr('marker-end', 'url(#gradient-arrow)');
+
+        overlay
+          .append('text')
+          .attr('x', cx + normGrad[0] * arrowLen + 5)
+          .attr('y', cy - normGrad[1] * arrowLen - 5)
+          .attr('fill', '#e74c3c')
+          .attr('font-size', '12px')
+          .attr('font-weight', 'bold')
+          .text('∇f');
+      }
+    }
+
+    // Draw search direction vector
+    if ((type === 'direction' || type === 'nextPoint') && direction) {
+      const dirLen = Math.sqrt(direction[0] ** 2 + direction[1] ** 2);
+      if (dirLen > 0.001) {
+        const normDir = [direction[0] / dirLen, direction[1] / dirLen];
+        const arrowLen = Math.min(dirLen * vectorScale, 100);
+
+        overlay
+          .append('line')
+          .attr('x1', cx)
+          .attr('y1', cy)
+          .attr('x2', cx + normDir[0] * arrowLen)
+          .attr('y2', cy - normDir[1] * arrowLen)
+          .attr('stroke', '#3498db')
+          .attr('stroke-width', 3)
+          .attr('stroke-opacity', 0.9)
+          .attr('marker-end', 'url(#direction-arrow)');
+
+        overlay
+          .append('text')
+          .attr('x', cx + normDir[0] * arrowLen + 5)
+          .attr('y', cy - normDir[1] * arrowLen + 15)
+          .attr('fill', '#3498db')
+          .attr('font-size', '12px')
+          .attr('font-weight', 'bold')
+          .text('d');
+      }
+    }
+
+    // Highlight next point
+    if (type === 'nextPoint' && nextPoint) {
+      const nx = xScale(nextPoint[0]);
+      const ny = yScale(nextPoint[1]);
+
+      // Dashed line to next point
+      overlay
+        .append('line')
+        .attr('x1', cx)
+        .attr('y1', cy)
+        .attr('x2', nx)
+        .attr('y2', ny)
+        .attr('stroke', '#27ae60')
+        .attr('stroke-width', 2)
+        .attr('stroke-dasharray', '5,5')
+        .attr('stroke-opacity', 0.8);
+
+      // Next point highlight
+      overlay
+        .append('circle')
+        .attr('cx', nx)
+        .attr('cy', ny)
+        .attr('r', 12)
+        .attr('fill', 'none')
+        .attr('stroke', '#27ae60')
+        .attr('stroke-width', 3)
+        .attr('stroke-opacity', 0.9);
+
+      overlay
+        .append('text')
+        .attr('x', nx + 15)
+        .attr('y', ny + 5)
+        .attr('fill', '#27ae60')
+        .attr('font-size', '12px')
+        .attr('font-weight', 'bold')
+        .text('x_{k+1}');
+    }
+
+    // Draw trust region circle
+    if (type === 'direction' && trustRegionRadius !== undefined) {
+      const radiusPixels = trustRegionRadius * vectorScale * 2;
+
+      overlay
+        .append('circle')
+        .attr('cx', cx)
+        .attr('cy', cy)
+        .attr('r', Math.min(radiusPixels, 100))
+        .attr('fill', 'rgba(155, 89, 182, 0.1)')
+        .attr('stroke', '#9b59b6')
+        .attr('stroke-width', 2)
+        .attr('stroke-dasharray', '4,4')
+        .attr('stroke-opacity', 0.8);
+
+      overlay
+        .append('text')
+        .attr('x', cx + Math.min(radiusPixels, 100) + 5)
+        .attr('y', cy)
+        .attr('fill', '#9b59b6')
+        .attr('font-size', '11px')
+        .text('Δ');
+    }
+
+    // Current point highlight
+    overlay
+      .append('circle')
+      .attr('cx', cx)
+      .attr('cy', cy)
+      .attr('r', 8)
+      .attr('fill', 'none')
+      .attr('stroke', '#f39c12')
+      .attr('stroke-width', 3)
+      .attr('stroke-opacity', 0.9);
+
+  }, [activeOverlay, xScale, yScale, xMin, xMax, yMin, yMax, innerWidth, innerHeight]);
+
   return (
     <svg
       ref={svgRef}
       width={width}
       height={height}
       style={{ background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
-    />
+    >
+      <defs>
+        <marker
+          id="gradient-arrow"
+          viewBox="-0 -5 10 10"
+          refX="8"
+          refY="0"
+          orient="auto"
+          markerWidth="6"
+          markerHeight="6"
+        >
+          <path d="M0,-5L10,0L0,5" fill="#e74c3c" />
+        </marker>
+        <marker
+          id="direction-arrow"
+          viewBox="-0 -5 10 10"
+          refX="8"
+          refY="0"
+          orient="auto"
+          markerWidth="6"
+          markerHeight="6"
+        >
+          <path d="M0,-5L10,0L0,5" fill="#3498db" />
+        </marker>
+      </defs>
+      <g ref={overlayRef} transform={`translate(${margin.left},${margin.top})`} />
+    </svg>
   );
 };

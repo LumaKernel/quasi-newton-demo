@@ -1,9 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InlineMath, BlockMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
 import type { IterationState } from '@/core/optimizers/types.ts';
 import { Tooltip } from '@/components/Tooltip.tsx';
+import { useVisualization, type OverlayData } from '@/contexts/index.ts';
 import styles from './StepDetails.module.css';
 
 interface StepDetailsProps {
@@ -92,6 +93,7 @@ export const StepDetails = ({
   color,
 }: StepDetailsProps) => {
   const { t } = useTranslation();
+  const { showOverlay, hideOverlay } = useVisualization();
 
   const currentState = useMemo(() => {
     if (iterations.length === 0) return null;
@@ -108,6 +110,39 @@ export const StepDetails = ({
 
   const formulas =
     methodFormulas[algorithmId as FormulaKey] ?? methodFormulas.steepestDescent;
+
+  const createOverlayHandler = useCallback(
+    (overlayType: OverlayData['type']) => ({
+      onMouseEnter: () => {
+        if (!currentState) return;
+        const baseData = {
+          type: overlayType,
+          algorithmId,
+          currentPoint: [currentState.x[0], currentState.x[1]] as readonly [number, number],
+          gradient: [currentState.gradient[0], currentState.gradient[1]] as readonly [number, number],
+        };
+
+        const overlay: OverlayData = {
+          ...baseData,
+          ...(currentState.direction && {
+            direction: [currentState.direction[0], currentState.direction[1]] as readonly [number, number],
+          }),
+          ...(nextState && {
+            nextPoint: [nextState.x[0], nextState.x[1]] as readonly [number, number],
+          }),
+          // For trust region, estimate radius from direction norm
+          ...(algorithmId === 'trustRegion' && currentState.direction && {
+            trustRegionRadius: Math.sqrt(
+              currentState.direction[0] ** 2 + currentState.direction[1] ** 2,
+            ),
+          }),
+        };
+        showOverlay(overlay);
+      },
+      onMouseLeave: hideOverlay,
+    }),
+    [currentState, nextState, algorithmId, showOverlay, hideOverlay],
+  );
 
   if (!currentState) {
     return null;
@@ -217,13 +252,18 @@ export const StepDetails = ({
           <code className={styles.valueCode}>{formatNumber(currentState.fx, 6)}</code>
         </div>
 
-        <div className={styles.valueRow}>
+        <div
+          className={`${styles.valueRow} ${styles.hoverable}`}
+          title={t('stepDetails.hoverHint')}
+          {...createOverlayHandler('gradient')}
+        >
           <span className={styles.valueLabel}>
             <InlineMath math="\nabla f(x_k)" />
           </span>
           <div className={styles.valueData}>
             <InlineMath math={formatVectorLatex(currentState.gradient)} />
           </div>
+          <span className={styles.hoverHint}>👁</span>
         </div>
 
         <div className={styles.valueRow}>
@@ -239,13 +279,18 @@ export const StepDetails = ({
           <>
             <div className={styles.separator} />
 
-            <div className={styles.valueRow}>
+            <div
+              className={`${styles.valueRow} ${styles.hoverable}`}
+              title={t('stepDetails.hoverHint')}
+              {...createOverlayHandler('direction')}
+            >
               <span className={styles.valueLabel}>
                 <InlineMath math="d_k" />
               </span>
               <div className={styles.valueData}>
                 <InlineMath math={formatVectorLatex(currentState.direction)} />
               </div>
+              <span className={styles.hoverHint}>👁</span>
             </div>
 
             <div className={styles.valueRow}>
@@ -266,13 +311,18 @@ export const StepDetails = ({
           <>
             <div className={styles.separator} />
 
-            <div className={styles.valueRow}>
+            <div
+              className={`${styles.valueRow} ${styles.hoverable}`}
+              title={t('stepDetails.hoverHint')}
+              {...createOverlayHandler('nextPoint')}
+            >
               <span className={styles.valueLabel}>
                 <InlineMath math="x_{k+1}" />
               </span>
               <div className={styles.valueData}>
                 <InlineMath math={formatVectorLatex(nextState.x)} />
               </div>
+              <span className={styles.hoverHint}>👁</span>
             </div>
 
             <div className={styles.valueRow}>

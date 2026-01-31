@@ -151,6 +151,29 @@
   min-height: 32px;
 }
 
+.hoverable {
+  cursor: pointer;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.hoverable:hover {
+  background: #e3f2fd;
+}
+
+.hoverHint {
+  opacity: 0.3;
+  font-size: 14px;
+  transition: opacity 0.15s ease;
+  flex-shrink: 0;
+}
+
+.hoverable:hover .hoverHint {
+  opacity: 1;
+}
+
 .valueLabel {
   min-width: 70px;
   font-weight: 500;
