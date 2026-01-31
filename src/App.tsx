@@ -37,6 +37,7 @@ const App = () => {
     selectedFunction.defaultStart as [number, number],
   );
   const [viewMode, setViewMode] = useState<ViewMode>('2d');
+  const [selectedHessianAlgorithm, setSelectedHessianAlgorithm] = useState<string>('bfgs');
 
   // Optimization results are derived from parameters - no useEffect needed
   const { results, maxIterationCount } = useOptimization({
@@ -75,22 +76,37 @@ const App = () => {
     [],
   );
 
-  // Get the first quasi-Newton result for Hessian comparison
-  // BB method also approximates inverse Hessian (as scalar * I)
-  const quasiNewtonResult = useMemo(() => {
+  // Get all quasi-Newton algorithms with hessianApprox data for Hessian comparison
+  const quasiNewtonAlgorithms = useMemo(() => {
+    const algos: Array<{
+      readonly id: string;
+      readonly hessianApprox: readonly (readonly number[])[];
+      readonly trueHessian: readonly (readonly number[])[];
+    }> = [];
     for (const id of ['bfgs', 'dfp', 'sr1', 'bb']) {
       const result = results.get(id);
-      if (result) return { id, result };
+      if (result) {
+        const idx = Math.min(currentIteration, result.iterations.length - 1);
+        const state = result.iterations[idx];
+        if (state?.hessianApprox && state?.trueHessian) {
+          algos.push({
+            id,
+            hessianApprox: state.hessianApprox,
+            trueHessian: state.trueHessian,
+          });
+        }
+      }
     }
-    return null;
-  }, [results]);
+    return algos;
+  }, [results, currentIteration]);
 
-  const currentIterationState = useMemo(() => {
-    if (!quasiNewtonResult) return null;
-    const { result } = quasiNewtonResult;
-    const idx = Math.min(currentIteration, result.iterations.length - 1);
-    return result.iterations[idx];
-  }, [quasiNewtonResult, currentIteration]);
+  // Auto-select first available algorithm if current selection is not available
+  const effectiveHessianAlgorithm = useMemo(() => {
+    if (quasiNewtonAlgorithms.some((a) => a.id === selectedHessianAlgorithm)) {
+      return selectedHessianAlgorithm;
+    }
+    return quasiNewtonAlgorithms[0]?.id ?? 'bfgs';
+  }, [quasiNewtonAlgorithms, selectedHessianAlgorithm]);
 
   return (
     <div className={styles.app}>
@@ -284,16 +300,18 @@ const App = () => {
 
             <FormulaLegend />
 
-            {currentIterationState && quasiNewtonResult && (
+            {quasiNewtonAlgorithms.length > 0 && (
               <>
                 <MatrixComparison
-                  trueHessian={currentIterationState.trueHessian}
-                  approximateInverseHessian={currentIterationState.hessianApprox}
+                  availableAlgorithms={quasiNewtonAlgorithms}
+                  selectedAlgorithmId={effectiveHessianAlgorithm}
+                  onAlgorithmChange={setSelectedHessianAlgorithm}
                   iteration={currentIteration}
+                  algorithmColors={algorithmColors}
                 />
                 <EigenvalueAnalysis
-                  trueHessian={currentIterationState.trueHessian}
-                  approximateInverseHessian={currentIterationState.hessianApprox}
+                  availableAlgorithms={quasiNewtonAlgorithms}
+                  selectedAlgorithmId={effectiveHessianAlgorithm}
                   iteration={currentIteration}
                 />
               </>

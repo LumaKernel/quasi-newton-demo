@@ -277,24 +277,70 @@
   font-size: 1em;
 }
 
-.hessianNote {
+.hessianSection {
   margin-top: 12px;
-  padding: 10px 12px;
+  padding: 12px;
   background: linear-gradient(135deg, #fff3e0 0%, #fff8e1 100%);
   border-radius: 6px;
   border: 1px solid #ffe0b2;
+}
+
+.hessianHeader {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 12px;
+  margin-bottom: 10px;
 }
 
-.hessianNote :global(.katex) {
+.hessianHeader :global(.katex) {
   font-size: 1em;
   color: #e65100;
 }
 
-.hessianNoteText {
-  color: #bf360c;
+.hessianSubtitle {
   font-size: 11px;
+  color: #bf360c;
+}
+
+.matrixDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px;
+  background: #fff;
+  border-radius: 4px;
+}
+
+.matrixBracket {
+  font-size: 28px;
+  font-weight: 100;
+  color: #666;
+  line-height: 1;
+}
+
+.matrixContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.matrixRow {
+  display: flex;
+  gap: 8px;
+}
+
+.matrixCell {
+  font-family: 'Monaco', 'Consolas', 'Menlo', monospace;
+  font-size: 11px;
+  min-width: 60px;
+  text-align: right;
+  color: #333;
+}
+
+.hessianNote {
+  margin-top: 8px;
+  font-size: 10px;
+  color: #bf360c;
+  text-align: center;
 }

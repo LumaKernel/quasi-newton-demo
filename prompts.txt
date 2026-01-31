@@ -83,6 +83,11 @@ BB法でも出るのは妥当じゃない？
 DONE
 
 
+サイドのヘッセ行列の比較ってどのアルゴリズム基準？
+DONE
+わかりにくいので選択できるようにして、かつそれぞれのアルゴリズムのパネルにもB_kも表示して、軽く詳細とかも併記しよう
+DONE
+
 
 
 check/review test/stories/coverage again now.

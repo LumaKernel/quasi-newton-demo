@@ -413,14 +413,39 @@ export const StepDetails = ({
         )}
       </div>
 
-      {(algorithmId === 'bfgs' || algorithmId === 'dfp' || algorithmId === 'sr1') && (
-        <div className={styles.hessianNote}>
-          <InlineMath math="B_k \approx H^{-1}" />
-          <span className={styles.hessianNoteText}>
-            {t('stepDetails.seeMatrixComparison')}
-          </span>
-        </div>
-      )}
+      {(algorithmId === 'bfgs' || algorithmId === 'dfp' || algorithmId === 'sr1' || algorithmId === 'bb') &&
+        currentState.hessianApprox && (
+          <div className={styles.hessianSection}>
+            <div className={styles.hessianHeader}>
+              <InlineMath math="B_k \approx H^{-1}" />
+              <span className={styles.hessianSubtitle}>
+                {algorithmId === 'bb'
+                  ? t('stepDetails.bbHessianApprox')
+                  : t('stepDetails.quasiNewtonHessianApprox')}
+              </span>
+            </div>
+            <div className={styles.matrixDisplay}>
+              <div className={styles.matrixBracket}>[</div>
+              <div className={styles.matrixContent}>
+                {currentState.hessianApprox.map((row, i) => (
+                  <div key={i} className={styles.matrixRow}>
+                    {row.map((val, j) => (
+                      <span key={j} className={styles.matrixCell}>
+                        {Math.abs(val) < 0.0001 && val !== 0
+                          ? val.toExponential(2)
+                          : val.toFixed(4)}
+                      </span>
+                    ))}
+                  </div>
+                ))}
+              </div>
+              <div className={styles.matrixBracket}>]</div>
+            </div>
+            <div className={styles.hessianNote}>
+              {t('stepDetails.seeMatrixComparison')}
+            </div>
+          </div>
+        )}
 
       {func && (
         <LineSearchChart

@@ -4,9 +4,15 @@ import { InlineMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
 import styles from './EigenvalueAnalysis.module.css';
 
+interface AlgorithmHessianData {
+  readonly id: string;
+  readonly hessianApprox: readonly (readonly number[])[];
+  readonly trueHessian: readonly (readonly number[])[];
+}
+
 interface EigenvalueAnalysisProps {
-  readonly trueHessian: readonly (readonly number[])[] | null;
-  readonly approximateInverseHessian: readonly (readonly number[])[] | null;
+  readonly availableAlgorithms: readonly AlgorithmHessianData[];
+  readonly selectedAlgorithmId: string;
   readonly iteration: number;
 }
 
@@ -128,11 +134,19 @@ const EigenvalueBar = ({
 };
 
 export const EigenvalueAnalysis = ({
-  trueHessian,
-  approximateInverseHessian,
+  availableAlgorithms,
+  selectedAlgorithmId,
   iteration,
 }: EigenvalueAnalysisProps) => {
   const { t } = useTranslation();
+
+  const selectedData = useMemo(
+    () => availableAlgorithms.find((a) => a.id === selectedAlgorithmId) ?? availableAlgorithms[0],
+    [availableAlgorithms, selectedAlgorithmId],
+  );
+
+  const trueHessian = selectedData?.trueHessian ?? null;
+  const approximateInverseHessian = selectedData?.hessianApprox ?? null;
 
   const trueHessianEigen = useMemo(() => {
     if (!trueHessian) return null;
@@ -151,7 +165,7 @@ export const EigenvalueAnalysis = ({
     return computeEigendata(approximateInverseHessian);
   }, [approximateInverseHessian]);
 
-  if (!trueHessianEigen) {
+  if (!trueHessianEigen || availableAlgorithms.length === 0) {
     return null;
   }
 

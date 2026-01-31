@@ -5,18 +5,36 @@ import type { Matrix } from '@/core/linalg/types.ts';
 import { sub as matSub, frobeniusNorm, inverse } from '@/core/linalg/matrix.ts';
 import styles from './MatrixComparison.module.css';
 
-interface MatrixComparisonProps {
+interface AlgorithmHessianData {
+  readonly id: string;
+  readonly hessianApprox: Matrix;
   readonly trueHessian: Matrix;
-  readonly approximateInverseHessian: Matrix;
+}
+
+interface MatrixComparisonProps {
+  readonly availableAlgorithms: readonly AlgorithmHessianData[];
+  readonly selectedAlgorithmId: string;
+  readonly onAlgorithmChange: (id: string) => void;
   readonly iteration: number;
+  readonly algorithmColors: Record<string, string>;
 }
 
 export const MatrixComparison = ({
-  trueHessian,
-  approximateInverseHessian,
+  availableAlgorithms,
+  selectedAlgorithmId,
+  onAlgorithmChange,
   iteration,
+  algorithmColors,
 }: MatrixComparisonProps) => {
   const { t } = useTranslation();
+
+  const selectedData = useMemo(
+    () => availableAlgorithms.find((a) => a.id === selectedAlgorithmId) ?? availableAlgorithms[0],
+    [availableAlgorithms, selectedAlgorithmId],
+  );
+
+  const trueHessian = selectedData?.trueHessian ?? [[1, 0], [0, 1]];
+  const approximateInverseHessian = selectedData?.hessianApprox ?? [[1, 0], [0, 1]];
 
   const trueInverseHessian = useMemo(() => {
     const inv = inverse(trueHessian);
@@ -38,9 +56,40 @@ export const MatrixComparison = ({
     return trueNorm > 0 ? frobeniusError / trueNorm : Infinity;
   }, [frobeniusError, trueInverseHessian]);
 
+  if (availableAlgorithms.length === 0) {
+    return null;
+  }
+
   return (
     <div className={styles.container}>
-      <h3 className={styles.title}>{t('hessian.title', { iteration })}</h3>
+      <div className={styles.headerRow}>
+        <h3 className={styles.title}>{t('hessian.title', { iteration })}</h3>
+        <select
+          className={styles.algorithmSelect}
+          value={selectedAlgorithmId}
+          onChange={(e) => onAlgorithmChange(e.target.value)}
+        >
+          {availableAlgorithms.map((algo) => (
+            <option key={algo.id} value={algo.id}>
+              {t(`optimizers.${algo.id}.name`)}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div
+        className={styles.algorithmIndicator}
+        style={{ borderColor: algorithmColors[selectedAlgorithmId] }}
+      >
+        <span
+          className={styles.colorDot}
+          style={{ background: algorithmColors[selectedAlgorithmId] }}
+        />
+        <span>{t(`optimizers.${selectedAlgorithmId}.name`)}</span>
+        <span className={styles.algorithmDesc}>
+          {t(`optimizers.${selectedAlgorithmId}.description`)}
+        </span>
+      </div>
 
       <div className={styles.matrices}>
         <div className={styles.matrixItem}>
