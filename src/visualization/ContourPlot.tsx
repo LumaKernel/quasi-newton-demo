@@ -75,7 +75,6 @@ export const ContourPlot = ({
   onStartPointChange,
 }: ContourPlotProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
-  const overlayRef = useRef<SVGGElement>(null);
   const { activeOverlay } = useVisualization();
   const margin = { top: 20, right: 20, bottom: 40, left: 50 };
   const innerWidth = width - margin.left - margin.right;
@@ -121,10 +120,13 @@ export const ContourPlot = ({
     if (!svgRef.current) return;
 
     const svg = d3.select(svgRef.current);
-    svg.selectAll('*').remove();
+    // Remove only the main group, preserve defs and overlay
+    svg.selectAll('g.main').remove();
+    svg.selectAll('defs').remove();
 
     const g = svg
-      .append('g')
+      .insert('g', 'g.overlay')
+      .attr('class', 'main')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Draw contours
@@ -281,11 +283,47 @@ export const ContourPlot = ({
 
   // Render overlay based on hover state
   useEffect(() => {
-    if (!overlayRef.current) return;
-    const overlay = d3.select(overlayRef.current);
+    if (!svgRef.current) return;
+    const svg = d3.select(svgRef.current);
+
+    // Ensure overlay group exists
+    let overlay = svg.select<SVGGElement>('g.overlay');
+    if (overlay.empty()) {
+      overlay = svg.append('g').attr('class', 'overlay').attr('transform', `translate(${margin.left},${margin.top})`);
+    }
     overlay.selectAll('*').remove();
 
     if (!activeOverlay) return;
+
+    // Add arrow markers
+    let defs = svg.select<SVGDefsElement>('defs.overlay-defs');
+    if (defs.empty()) {
+      defs = svg.append('defs').attr('class', 'overlay-defs');
+
+      defs.append('marker')
+        .attr('id', 'gradient-arrow')
+        .attr('viewBox', '-0 -5 10 10')
+        .attr('refX', 8)
+        .attr('refY', 0)
+        .attr('orient', 'auto')
+        .attr('markerWidth', 6)
+        .attr('markerHeight', 6)
+        .append('path')
+        .attr('d', 'M0,-5L10,0L0,5')
+        .attr('fill', '#e74c3c');
+
+      defs.append('marker')
+        .attr('id', 'direction-arrow')
+        .attr('viewBox', '-0 -5 10 10')
+        .attr('refX', 8)
+        .attr('refY', 0)
+        .attr('orient', 'auto')
+        .attr('markerWidth', 6)
+        .attr('markerHeight', 6)
+        .append('path')
+        .attr('d', 'M0,-5L10,0L0,5')
+        .attr('fill', '#3498db');
+    }
 
     const { type, currentPoint, gradient, direction, nextPoint, trustRegionRadius } = activeOverlay;
 
@@ -428,7 +466,7 @@ export const ContourPlot = ({
       .attr('stroke-width', 3)
       .attr('stroke-opacity', 0.9);
 
-  }, [activeOverlay, xScale, yScale, xMin, xMax, yMin, yMax, innerWidth, innerHeight]);
+  }, [activeOverlay, xScale, yScale, xMin, xMax, yMin, yMax, innerWidth, innerHeight, margin.left, margin.top]);
 
   return (
     <svg
@@ -436,32 +474,6 @@ export const ContourPlot = ({
       width={width}
       height={height}
       style={{ background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
-    >
-      <defs>
-        <marker
-          id="gradient-arrow"
-          viewBox="-0 -5 10 10"
-          refX="8"
-          refY="0"
-          orient="auto"
-          markerWidth="6"
-          markerHeight="6"
-        >
-          <path d="M0,-5L10,0L0,5" fill="#e74c3c" />
-        </marker>
-        <marker
-          id="direction-arrow"
-          viewBox="-0 -5 10 10"
-          refX="8"
-          refY="0"
-          orient="auto"
-          markerWidth="6"
-          markerHeight="6"
-        >
-          <path d="M0,-5L10,0L0,5" fill="#3498db" />
-        </marker>
-      </defs>
-      <g ref={overlayRef} transform={`translate(${margin.left},${margin.top})`} />
-    </svg>
+    />
   );
 };
