@@ -35,7 +35,7 @@ export const ComparisonPanel = ({ results }: ComparisonPanelProps) => {
                 className={styles.colorDot}
                 style={{ background: algorithmColors[id] }}
               />
-              {id.toUpperCase()}
+              {t(`optimizers.${id}.name`)}
             </span>
             <span className={styles.value}>{result.iterations.length - 1}</span>
             <span className={styles.value}>{result.finalValue.toExponential(4)}</span>
@@ -57,7 +57,7 @@ export const ComparisonPanel = ({ results }: ComparisonPanelProps) => {
                   className={styles.colorDot}
                   style={{ background: algorithmColors[id] }}
                 />
-                {id.toUpperCase()}
+                {t(`optimizers.${id}.name`)}
               </div>
               <div className={styles.statGrid}>
                 <span>{t('comparison.solution')}:</span>
