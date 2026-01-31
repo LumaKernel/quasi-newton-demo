@@ -7,6 +7,11 @@ export { booth } from './booth.ts';
 export { matyas } from './matyas.ts';
 export { threeHumpCamel } from './threeHumpCamel.ts';
 export { sphere } from './sphere.ts';
+export { trid } from './trid.ts';
+export { zakharov } from './zakharov.ts';
+export { sumSquares } from './sumSquares.ts';
+export { dixonPrice } from './dixonPrice.ts';
+export { rotatedEllipsoid } from './rotatedEllipsoid.ts';
 export { levi } from './levi.ts';
 export { rastrigin } from './rastrigin.ts';
 export { ackley } from './ackley.ts';
@@ -30,6 +35,11 @@ import { booth } from './booth.ts';
 import { matyas } from './matyas.ts';
 import { threeHumpCamel } from './threeHumpCamel.ts';
 import { sphere } from './sphere.ts';
+import { trid } from './trid.ts';
+import { zakharov } from './zakharov.ts';
+import { sumSquares } from './sumSquares.ts';
+import { dixonPrice } from './dixonPrice.ts';
+import { rotatedEllipsoid } from './rotatedEllipsoid.ts';
 import { levi } from './levi.ts';
 import { rastrigin } from './rastrigin.ts';
 import { ackley } from './ackley.ts';
@@ -48,31 +58,41 @@ import type { ObjectiveFunction } from './types.ts';
 
 /**
  * All available objective functions for optimization
+ * Organized roughly by complexity: simple quadratics first, then moderate, then complex
  */
 export const allFunctions: readonly ObjectiveFunction[] = [
-  rosenbrock,
-  himmelblau,
+  // Simple (convex, single minimum)
+  sphere,
   quadratic,
   illConditionedQuadratic,
-  beale,
+  sumSquares,
+  rotatedEllipsoid,
+  trid,
   booth,
   matyas,
+  // Moderate complexity (valleys, some nonlinearity)
+  rosenbrock,
+  beale,
+  zakharov,
+  dixonPrice,
   threeHumpCamel,
-  sphere,
+  mccormick,
+  branin,
+  // More complex (multiple minima or special structure)
+  himmelblau,
+  goldsteinPrice,
+  sixHumpCamel,
+  styblinskiTang,
   levi,
+  // Highly complex (many local minima)
   rastrigin,
   ackley,
-  goldsteinPrice,
-  easom,
-  styblinskiTang,
-  mccormick,
-  sixHumpCamel,
   schaffer2,
+  easom,
   bukin6,
   crossInTray,
   holderTable,
   dropWave,
-  branin,
 ];
 
 /**

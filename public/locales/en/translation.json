@@ -150,6 +150,26 @@
       "name": "Sphere",
       "description": "f(x,y) = x² + y²"
     },
+    "trid": {
+      "name": "Trid",
+      "description": "f(x,y) = (x-1)² + (y-1)² - xy"
+    },
+    "zakharov": {
+      "name": "Zakharov",
+      "description": "f(x,y) = x² + y² + (0.5x + y)² + (0.5x + y)⁴"
+    },
+    "sumSquares": {
+      "name": "Sum of Squares",
+      "description": "f(x,y) = x² + 2y²"
+    },
+    "dixonPrice": {
+      "name": "Dixon-Price",
+      "description": "f(x,y) = (x - 1)² + 2(2y² - x)²"
+    },
+    "rotatedEllipsoid": {
+      "name": "Rotated Ellipsoid",
+      "description": "f(x,y) = x² + (x + y)²"
+    },
     "levi": {
       "name": "Lévi N.13",
       "description": "f(x,y) = sin²(3πx) + (x-1)²(1+sin²(3πy)) + (y-1)²(1+sin²(2πy))"

@@ -18,6 +18,7 @@ export const createQuadratic = (
   ],
   b: readonly number[] = [0, 0],
   c = 0,
+  id = 'quadratic',
 ): ObjectiveFunction => {
   const [[a11, a12], [a21, a22]] = a;
 
@@ -26,7 +27,7 @@ export const createQuadratic = (
   const minX = det !== 0 ? [(-a22 * b[0] + a12 * b[1]) / det, (a21 * b[0] - a11 * b[1]) / det] : [0, 0];
 
   return {
-    id: 'quadratic',
+    id,
     name: 'Quadratic',
     description: `f(x,y) = ½(${a11}x² + ${a12 + a21}xy + ${a22}y²) + ${b[0]}x + ${b[1]}y`,
     dimension: 2,
@@ -56,7 +57,12 @@ export const quadratic = createQuadratic();
  * Ill-conditioned quadratic with high condition number
  * Good for demonstrating the advantage of quasi-Newton methods
  */
-export const illConditionedQuadratic = createQuadratic([
-  [100, 0],
-  [0, 1],
-]);
+export const illConditionedQuadratic = createQuadratic(
+  [
+    [100, 0],
+    [0, 1],
+  ],
+  [0, 0],
+  0,
+  'illConditionedQuadratic',
+);

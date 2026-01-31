@@ -3,7 +3,8 @@
     "allow": [
       "WebFetch(domain:en.wikipedia.org)",
       "WebFetch(domain:vite.dev)",
-      "Bash(GITHUB_ACTIONS=true npm run build:*)"
+      "Bash(GITHUB_ACTIONS=true npm run build:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

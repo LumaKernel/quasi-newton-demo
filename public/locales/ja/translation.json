@@ -153,6 +153,26 @@
       "name": "球面関数",
       "description": "f(x,y) = x² + y²"
     },
+    "trid": {
+      "name": "Trid関数",
+      "description": "f(x,y) = (x-1)² + (y-1)² - xy"
+    },
+    "zakharov": {
+      "name": "Zakharov関数",
+      "description": "f(x,y) = x² + y² + (0.5x + y)² + (0.5x + y)⁴"
+    },
+    "sumSquares": {
+      "name": "重み付き球面",
+      "description": "f(x,y) = x² + 2y²"
+    },
+    "dixonPrice": {
+      "name": "Dixon-Price関数",
+      "description": "f(x,y) = (x - 1)² + 2(2y² - x)²"
+    },
+    "rotatedEllipsoid": {
+      "name": "回転楕円体",
+      "description": "f(x,y) = x² + (x + y)²"
+    },
     "levi": {
       "name": "Lévi N.13関数",
       "description": "f(x,y) = sin²(3πx) + (x-1)²(1+sin²(3πy)) + (y-1)²(1+sin²(2πy))"
