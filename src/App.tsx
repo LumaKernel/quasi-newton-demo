@@ -24,7 +24,12 @@ type ViewMode = '2d' | '3d';
 const App = () => {
   const { t } = useTranslation();
   const [selectedFunction, setSelectedFunction] = useState<ObjectiveFunction>(rosenbrock);
-  const [selectedAlgorithms, setSelectedAlgorithms] = useState<readonly string[]>(['bfgs']);
+  const [selectedAlgorithms, setSelectedAlgorithms] = useState<readonly string[]>([
+    'steepestDescent',
+    'newton',
+    'bb',
+    'trustRegion',
+  ]);
   const [startPoint, setStartPoint] = useState<readonly [number, number]>(
     selectedFunction.defaultStart as [number, number],
   );
