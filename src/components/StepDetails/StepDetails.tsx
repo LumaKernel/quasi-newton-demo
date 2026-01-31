@@ -98,7 +98,7 @@ export const StepDetails = ({
   func,
 }: StepDetailsProps) => {
   const { t } = useTranslation();
-  const { showOverlay, hideOverlay } = useVisualization();
+  const { showOverlay, hideOverlay, togglePin, isPinned, activeOverlay } = useVisualization();
 
   const currentState = useMemo(() => {
     if (iterations.length === 0) return null;
@@ -116,42 +116,55 @@ export const StepDetails = ({
   const formulas =
     methodFormulas[algorithmId as FormulaKey] ?? methodFormulas.steepestDescent;
 
-  const createOverlayHandler = useCallback(
-    (overlayType: OverlayData['type']) => ({
-      onMouseEnter: () => {
-        if (!currentState) return;
-        const baseData = {
-          type: overlayType,
-          algorithmId,
-          currentPoint: [currentState.x[0], currentState.x[1]] as readonly [number, number],
-          gradient: [currentState.gradient[0], currentState.gradient[1]] as readonly [number, number],
-          fx: currentState.fx,
-        };
+  const createOverlayData = useCallback(
+    (overlayType: OverlayData['type']): OverlayData | null => {
+      if (!currentState) return null;
+      const baseData = {
+        type: overlayType,
+        algorithmId,
+        currentPoint: [currentState.x[0], currentState.x[1]] as readonly [number, number],
+        gradient: [currentState.gradient[0], currentState.gradient[1]] as readonly [number, number],
+        fx: currentState.fx,
+      };
 
-        const overlay: OverlayData = {
-          ...baseData,
-          ...(currentState.direction && {
-            direction: [currentState.direction[0], currentState.direction[1]] as readonly [number, number],
-          }),
-          ...(nextState && {
-            nextPoint: [nextState.x[0], nextState.x[1]] as readonly [number, number],
-          }),
-          // For trust region, estimate radius from direction norm
-          ...(algorithmId === 'trustRegion' && currentState.direction && {
-            trustRegionRadius: Math.sqrt(
-              currentState.direction[0] ** 2 + currentState.direction[1] ** 2,
-            ),
-          }),
-          // Include Hessian for quadratic model visualization
-          ...(currentState.trueHessian && {
-            hessian: currentState.trueHessian,
-          }),
-        };
-        showOverlay(overlay);
-      },
-      onMouseLeave: hideOverlay,
-    }),
-    [currentState, nextState, algorithmId, showOverlay, hideOverlay],
+      return {
+        ...baseData,
+        ...(currentState.direction && {
+          direction: [currentState.direction[0], currentState.direction[1]] as readonly [number, number],
+        }),
+        ...(nextState && {
+          nextPoint: [nextState.x[0], nextState.x[1]] as readonly [number, number],
+        }),
+        ...(algorithmId === 'trustRegion' && currentState.direction && {
+          trustRegionRadius: Math.sqrt(
+            currentState.direction[0] ** 2 + currentState.direction[1] ** 2,
+          ),
+        }),
+        ...(currentState.trueHessian && {
+          hessian: currentState.trueHessian,
+        }),
+      };
+    },
+    [currentState, nextState, algorithmId],
+  );
+
+  const createOverlayHandler = useCallback(
+    (overlayType: OverlayData['type']) => {
+      const isActive = isPinned && activeOverlay?.type === overlayType && activeOverlay?.algorithmId === algorithmId;
+      return {
+        onMouseEnter: () => {
+          const overlay = createOverlayData(overlayType);
+          if (overlay) showOverlay(overlay);
+        },
+        onMouseLeave: hideOverlay,
+        onClick: () => {
+          const overlay = createOverlayData(overlayType);
+          if (overlay) togglePin(overlay);
+        },
+        className: `${styles.valueRow} ${styles.hoverable} ${isActive ? styles.pinned : ''}`,
+      };
+    },
+    [createOverlayData, showOverlay, hideOverlay, togglePin, isPinned, activeOverlay, algorithmId],
   );
 
   if (!currentState) {
@@ -220,7 +233,6 @@ export const StepDetails = ({
             </summary>
             <div className={styles.hessianUpdateFormula}>
               <div
-                className={styles.hoverable}
                 {...createOverlayHandler('quadraticModel')}
                 title={t('stepDetails.hoverHint')}
               >
@@ -274,7 +286,6 @@ export const StepDetails = ({
         </div>
 
         <div
-          className={`${styles.valueRow} ${styles.hoverable}`}
           title={t('stepDetails.hoverHint')}
           {...createOverlayHandler('gradient')}
         >
@@ -305,7 +316,6 @@ export const StepDetails = ({
             <div className={styles.separator} />
 
             <div
-              className={`${styles.valueRow} ${styles.hoverable}`}
               title={t('stepDetails.hoverHint')}
               {...createOverlayHandler('direction')}
             >
@@ -316,10 +326,10 @@ export const StepDetails = ({
                 <InlineMath math={formatVectorLatex(currentState.direction)} />
               </div>
               <span className={styles.hoverHint}>
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-              <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-            </svg>
-          </span>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                  <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                </svg>
+              </span>
             </div>
 
             <div className={styles.valueRow}>
@@ -341,7 +351,6 @@ export const StepDetails = ({
             <div className={styles.separator} />
 
             <div
-              className={`${styles.valueRow} ${styles.hoverable}`}
               title={t('stepDetails.hoverHint')}
               {...createOverlayHandler('nextPoint')}
             >
@@ -352,10 +361,10 @@ export const StepDetails = ({
                 <InlineMath math={formatVectorLatex(nextState.x)} />
               </div>
               <span className={styles.hoverHint}>
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-              <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-            </svg>
-          </span>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                  <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                </svg>
+              </span>
             </div>
 
             <div className={styles.valueRow}>

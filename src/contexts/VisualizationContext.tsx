@@ -28,32 +28,51 @@ export interface OverlayData {
 
 interface VisualizationContextValue {
   readonly activeOverlay: OverlayData | null;
-  readonly setActiveOverlay: (overlay: OverlayData | null) => void;
+  readonly isPinned: boolean;
   readonly showOverlay: (overlay: OverlayData) => void;
   readonly hideOverlay: () => void;
+  readonly togglePin: (overlay: OverlayData) => void;
 }
 
 const VisualizationContext = createContext<VisualizationContextValue | null>(null);
 
 export const VisualizationProvider = ({ children }: { readonly children: React.ReactNode }) => {
   const [activeOverlay, setActiveOverlay] = useState<OverlayData | null>(null);
+  const [isPinned, setIsPinned] = useState(false);
 
   const showOverlay = useCallback((overlay: OverlayData) => {
-    setActiveOverlay(overlay);
-  }, []);
+    if (!isPinned) {
+      setActiveOverlay(overlay);
+    }
+  }, [isPinned]);
 
   const hideOverlay = useCallback(() => {
-    setActiveOverlay(null);
-  }, []);
+    if (!isPinned) {
+      setActiveOverlay(null);
+    }
+  }, [isPinned]);
+
+  const togglePin = useCallback((overlay: OverlayData) => {
+    if (isPinned && activeOverlay?.type === overlay.type && activeOverlay?.algorithmId === overlay.algorithmId) {
+      // Unpin if clicking the same overlay
+      setIsPinned(false);
+      setActiveOverlay(null);
+    } else {
+      // Pin this overlay
+      setActiveOverlay(overlay);
+      setIsPinned(true);
+    }
+  }, [isPinned, activeOverlay]);
 
   const value = useMemo(
     () => ({
       activeOverlay,
-      setActiveOverlay,
+      isPinned,
       showOverlay,
       hideOverlay,
+      togglePin,
     }),
-    [activeOverlay, showOverlay, hideOverlay],
+    [activeOverlay, isPinned, showOverlay, hideOverlay, togglePin],
   );
 
   return (
