@@ -154,6 +154,7 @@ DONE
 
 
 2Dプロットでsubが _{k+1} のように表示されてしまっている。
+DONE
 
 
 check/review test/stories/coverage again now.

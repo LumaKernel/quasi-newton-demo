@@ -428,7 +428,7 @@ export const ContourPlot = ({
         .attr('fill', '#27ae60')
         .attr('font-size', '12px')
         .attr('font-weight', 'bold')
-        .text('x_{k+1}');
+        .text('xₖ₊₁');
     }
 
     // Draw trust region circle
