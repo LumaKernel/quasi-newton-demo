@@ -1,11 +1,42 @@
 import { useMemo } from 'react';
 import * as THREE from 'three';
-import { useVisualization } from '@/contexts/index.ts';
+import { useVisualization, type OverlayData, type OverlayType } from '@/contexts/index.ts';
 import type { ObjectiveFunction } from '@/core/functions/types.ts';
+import type { IterationState } from '@/core/optimizers/types.ts';
 
 interface Overlay3DProps {
   readonly func: ObjectiveFunction;
+  readonly iterations: readonly IterationState[];
+  readonly currentIteration: number;
+  readonly algorithmId?: string;
 }
+
+/** Compute overlay data from iteration state */
+const computeOverlayData = (
+  type: OverlayType,
+  algorithmId: string,
+  currentState: IterationState,
+  nextState: IterationState | null,
+): OverlayData => ({
+  type,
+  algorithmId,
+  currentPoint: [currentState.x[0], currentState.x[1]] as const,
+  gradient: [currentState.gradient[0], currentState.gradient[1]] as const,
+  fx: currentState.fx,
+  ...(currentState.direction && {
+    direction: [currentState.direction[0], currentState.direction[1]] as const,
+  }),
+  ...(nextState && {
+    nextPoint: [nextState.x[0], nextState.x[1]] as const,
+  }),
+  ...(algorithmId === 'trustRegion' && currentState.direction && {
+    trustRegionRadius: Math.sqrt(
+      currentState.direction[0] ** 2 + currentState.direction[1] ** 2,
+    ),
+  }),
+  ...(currentState.trueHessian && { hessian: currentState.trueHessian }),
+  ...(currentState.hessianApprox && { hessianApprox: currentState.hessianApprox }),
+});
 
 // Quadratic model surface mesh
 const QuadraticSurface = ({
@@ -157,8 +188,24 @@ const Arrow = ({
   );
 };
 
-export const Overlay3D = ({ func }: Overlay3DProps) => {
-  const { activeOverlay } = useVisualization();
+export const Overlay3D = ({ func, iterations, currentIteration, algorithmId }: Overlay3DProps) => {
+  const { pinnedConfig, hoverOverlay } = useVisualization();
+
+  // Compute activeOverlay: pinned takes priority, then hover
+  const activeOverlay = useMemo((): OverlayData | null => {
+    if (pinnedConfig && algorithmId && pinnedConfig.algorithmId === algorithmId) {
+      const idx = Math.min(currentIteration, iterations.length - 1);
+      const currentState = iterations[idx];
+      if (!currentState) return null;
+      const nextIdx = Math.min(currentIteration + 1, iterations.length - 1);
+      const nextState = nextIdx !== currentIteration ? iterations[nextIdx] : null;
+      return computeOverlayData(pinnedConfig.type, algorithmId, currentState, nextState);
+    }
+    if (hoverOverlay && (!algorithmId || hoverOverlay.algorithmId === algorithmId)) {
+      return hoverOverlay;
+    }
+    return null;
+  }, [pinnedConfig, hoverOverlay, algorithmId, iterations, currentIteration]);
 
   const overlayData = useMemo(() => {
     if (!activeOverlay) return null;

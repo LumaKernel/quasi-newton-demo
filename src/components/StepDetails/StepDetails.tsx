@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useEffect } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InlineMath, BlockMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
@@ -98,7 +98,7 @@ export const StepDetails = ({
   func,
 }: StepDetailsProps) => {
   const { t } = useTranslation();
-  const { showOverlay, hideOverlay, togglePin, pinnedConfig, updatePinnedOverlay } = useVisualization();
+  const { showHover, hideHover, togglePin, isPinnedFor } = useVisualization();
 
   const currentState = useMemo(() => {
     if (iterations.length === 0) return null;
@@ -153,32 +153,21 @@ export const StepDetails = ({
 
   const createOverlayHandler = useCallback(
     (overlayType: OverlayData['type']) => {
-      const isActive = pinnedConfig?.type === overlayType && pinnedConfig?.algorithmId === algorithmId;
+      const isActive = isPinnedFor(algorithmId, overlayType);
       return {
         onMouseEnter: () => {
           const overlay = createOverlayData(overlayType);
-          if (overlay) showOverlay(overlay);
+          if (overlay) showHover(overlay);
         },
-        onMouseLeave: () => hideOverlay(algorithmId),
+        onMouseLeave: () => hideHover(algorithmId),
         onClick: () => {
-          const overlay = createOverlayData(overlayType);
-          if (overlay) togglePin(overlay);
+          togglePin({ type: overlayType, algorithmId });
         },
         className: `${styles.valueRow} ${styles.hoverable} ${isActive ? styles.pinned : ''}`,
       };
     },
-    [createOverlayData, showOverlay, hideOverlay, togglePin, pinnedConfig, algorithmId],
+    [createOverlayData, showHover, hideHover, togglePin, isPinnedFor, algorithmId],
   );
-
-  // Update pinned overlay when iteration changes
-  useEffect(() => {
-    if (pinnedConfig?.algorithmId === algorithmId) {
-      const overlay = createOverlayData(pinnedConfig.type);
-      if (overlay) {
-        updatePinnedOverlay(overlay);
-      }
-    }
-  }, [pinnedConfig, algorithmId, createOverlayData, updatePinnedOverlay]);
 
   if (!currentState) {
     return null;

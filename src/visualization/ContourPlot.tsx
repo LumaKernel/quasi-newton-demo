@@ -2,18 +2,46 @@ import { useRef, useEffect, useMemo } from 'react';
 import * as d3 from 'd3';
 import type { ObjectiveFunction } from '@/core/functions/types.ts';
 import type { IterationState } from '@/core/optimizers/types.ts';
-import { useVisualization } from '@/contexts/index.ts';
+import { useVisualization, type OverlayData, type OverlayType } from '@/contexts/index.ts';
 
 interface ContourPlotProps {
   readonly func: ObjectiveFunction;
   readonly iterations: readonly IterationState[];
   readonly currentIteration: number;
+  readonly algorithmId?: string;
   readonly width?: number;
   readonly height?: number;
   readonly showPath?: boolean;
   readonly showDirection?: boolean;
   readonly onStartPointChange?: (point: readonly [number, number]) => void;
 }
+
+/** Compute overlay data from iteration state */
+const computeOverlayData = (
+  type: OverlayType,
+  algorithmId: string,
+  currentState: IterationState,
+  nextState: IterationState | null,
+): OverlayData => ({
+  type,
+  algorithmId,
+  currentPoint: [currentState.x[0], currentState.x[1]] as const,
+  gradient: [currentState.gradient[0], currentState.gradient[1]] as const,
+  fx: currentState.fx,
+  ...(currentState.direction && {
+    direction: [currentState.direction[0], currentState.direction[1]] as const,
+  }),
+  ...(nextState && {
+    nextPoint: [nextState.x[0], nextState.x[1]] as const,
+  }),
+  ...(algorithmId === 'trustRegion' && currentState.direction && {
+    trustRegionRadius: Math.sqrt(
+      currentState.direction[0] ** 2 + currentState.direction[1] ** 2,
+    ),
+  }),
+  ...(currentState.trueHessian && { hessian: currentState.trueHessian }),
+  ...(currentState.hessianApprox && { hessianApprox: currentState.hessianApprox }),
+});
 
 interface ContourData {
   readonly values: number[];
@@ -68,6 +96,7 @@ export const ContourPlot = ({
   func,
   iterations,
   currentIteration,
+  algorithmId,
   width = 500,
   height = 500,
   showPath = true,
@@ -75,8 +104,27 @@ export const ContourPlot = ({
   onStartPointChange,
 }: ContourPlotProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
-  const { activeOverlay } = useVisualization();
+  const { pinnedConfig, hoverOverlay } = useVisualization();
   const margin = { top: 20, right: 20, bottom: 40, left: 50 };
+
+  // Compute activeOverlay: pinned takes priority, then hover
+  // Only show overlay if it's for this algorithm (or algorithmId is not specified)
+  const activeOverlay = useMemo((): OverlayData | null => {
+    // If pinned for this algorithm, compute from current iteration data
+    if (pinnedConfig && algorithmId && pinnedConfig.algorithmId === algorithmId) {
+      const idx = Math.min(currentIteration, iterations.length - 1);
+      const currentState = iterations[idx];
+      if (!currentState) return null;
+      const nextIdx = Math.min(currentIteration + 1, iterations.length - 1);
+      const nextState = nextIdx !== currentIteration ? iterations[nextIdx] : null;
+      return computeOverlayData(pinnedConfig.type, algorithmId, currentState, nextState);
+    }
+    // If hover overlay is for this algorithm, use it
+    if (hoverOverlay && (!algorithmId || hoverOverlay.algorithmId === algorithmId)) {
+      return hoverOverlay;
+    }
+    return null;
+  }, [pinnedConfig, hoverOverlay, algorithmId, iterations, currentIteration]);
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 

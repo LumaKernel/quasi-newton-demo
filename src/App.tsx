@@ -194,6 +194,7 @@ const App = () => {
                           func={selectedFunction}
                           iterations={result.iterations}
                           currentIteration={currentIteration}
+                          algorithmId={algId}
                           width={450}
                           height={400}
                           onStartPointChange={handleStartPointChange}
@@ -239,6 +240,7 @@ const App = () => {
                           func={selectedFunction}
                           iterations={result.iterations}
                           currentIteration={currentIteration}
+                          algorithmId={algId}
                           width={450}
                           height={400}
                         />

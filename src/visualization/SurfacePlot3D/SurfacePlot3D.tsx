@@ -14,6 +14,7 @@ interface SurfacePlot3DProps {
   readonly func: ObjectiveFunction;
   readonly iterations: readonly IterationState[];
   readonly currentIteration: number;
+  readonly algorithmId?: string;
   readonly width?: number;
   readonly height?: number;
   readonly showPath?: boolean;
@@ -24,6 +25,7 @@ export const SurfacePlot3D = ({
   func,
   iterations,
   currentIteration,
+  algorithmId,
   width = 500,
   height = 500,
   showPath = true,
@@ -81,7 +83,12 @@ export const SurfacePlot3D = ({
           )}
 
           {/* Interactive overlay */}
-          <Overlay3D func={func} />
+          <Overlay3D
+            func={func}
+            iterations={iterations}
+            currentIteration={currentIteration}
+            algorithmId={algorithmId}
+          />
         </Suspense>
 
         {/* Grid helper */}

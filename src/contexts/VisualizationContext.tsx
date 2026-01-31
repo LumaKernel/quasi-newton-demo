@@ -18,7 +18,6 @@ export interface OverlayData {
   readonly trustRegionRadius?: number;
   readonly fx?: number;
   readonly hessian?: readonly (readonly number[])[];
-  /** Approximate inverse Hessian B_k for quasi-Newton methods */
   readonly hessianApprox?: readonly (readonly number[])[];
   readonly hessianEigenvectors?: {
     readonly v1: readonly [number, number];
@@ -28,69 +27,65 @@ export interface OverlayData {
   };
 }
 
-interface PinnedConfig {
+export interface OverlayConfig {
   readonly type: OverlayType;
   readonly algorithmId: string;
 }
 
 interface VisualizationContextValue {
-  readonly activeOverlay: OverlayData | null;
-  readonly pinnedConfig: PinnedConfig | null;
-  readonly showOverlay: (overlay: OverlayData) => void;
-  readonly hideOverlay: (algorithmId: string) => void;
-  readonly togglePin: (overlay: OverlayData) => void;
-  readonly updatePinnedOverlay: (overlay: OverlayData) => void;
+  /** Pinned overlay config (only type + algorithmId) */
+  readonly pinnedConfig: OverlayConfig | null;
+  /** Hover overlay (full data, for immediate display) */
+  readonly hoverOverlay: OverlayData | null;
+  readonly showHover: (overlay: OverlayData) => void;
+  readonly hideHover: (algorithmId: string) => void;
+  readonly togglePin: (config: OverlayConfig) => void;
+  readonly isPinnedFor: (algorithmId: string, type: OverlayType) => boolean;
 }
 
 const VisualizationContext = createContext<VisualizationContextValue | null>(null);
 
 export const VisualizationProvider = ({ children }: { readonly children: React.ReactNode }) => {
-  const [activeOverlay, setActiveOverlay] = useState<OverlayData | null>(null);
-  const [pinnedConfig, setPinnedConfig] = useState<PinnedConfig | null>(null);
+  const [pinnedConfig, setPinnedConfig] = useState<OverlayConfig | null>(null);
+  const [hoverOverlay, setHoverOverlay] = useState<OverlayData | null>(null);
 
-  const showOverlay = useCallback((overlay: OverlayData) => {
-    // Only show if not pinned, or if this is the pinned algorithm updating its data
+  const showHover = useCallback((overlay: OverlayData) => {
+    // Don't update hover if pinned for a different overlay
     if (!pinnedConfig) {
-      setActiveOverlay(overlay);
+      setHoverOverlay(overlay);
     }
   }, [pinnedConfig]);
 
-  const hideOverlay = useCallback((algorithmId: string) => {
-    // Only hide if not pinned for this algorithm
-    if (!pinnedConfig || pinnedConfig.algorithmId !== algorithmId) {
-      setActiveOverlay((prev) => (prev?.algorithmId === algorithmId ? null : prev));
+  const hideHover = useCallback((algorithmId: string) => {
+    if (!pinnedConfig) {
+      setHoverOverlay((prev) => (prev?.algorithmId === algorithmId ? null : prev));
     }
   }, [pinnedConfig]);
 
-  const togglePin = useCallback((overlay: OverlayData) => {
-    if (pinnedConfig?.type === overlay.type && pinnedConfig?.algorithmId === overlay.algorithmId) {
-      // Unpin if clicking the same overlay
-      setPinnedConfig(null);
-      setActiveOverlay(null);
-    } else {
-      // Pin this overlay
-      setPinnedConfig({ type: overlay.type, algorithmId: overlay.algorithmId });
-      setActiveOverlay(overlay);
-    }
-  }, [pinnedConfig]);
+  const togglePin = useCallback((config: OverlayConfig) => {
+    setPinnedConfig((prev) => {
+      if (prev?.type === config.type && prev?.algorithmId === config.algorithmId) {
+        return null; // Unpin
+      }
+      return config; // Pin
+    });
+    setHoverOverlay(null);
+  }, []);
 
-  // Called by StepDetails to update the pinned overlay data when iteration changes
-  const updatePinnedOverlay = useCallback((overlay: OverlayData) => {
-    if (pinnedConfig?.type === overlay.type && pinnedConfig?.algorithmId === overlay.algorithmId) {
-      setActiveOverlay(overlay);
-    }
+  const isPinnedFor = useCallback((algorithmId: string, type: OverlayType) => {
+    return pinnedConfig?.algorithmId === algorithmId && pinnedConfig?.type === type;
   }, [pinnedConfig]);
 
   const value = useMemo(
     () => ({
-      activeOverlay,
       pinnedConfig,
-      showOverlay,
-      hideOverlay,
+      hoverOverlay,
+      showHover,
+      hideHover,
       togglePin,
-      updatePinnedOverlay,
+      isPinnedFor,
     }),
-    [activeOverlay, pinnedConfig, showOverlay, hideOverlay, togglePin, updatePinnedOverlay],
+    [pinnedConfig, hoverOverlay, showHover, hideHover, togglePin, isPinnedFor],
   );
 
   return (
