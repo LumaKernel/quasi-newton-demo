@@ -194,18 +194,22 @@
 }
 
 .explanationCard:nth-child(1) {
-  border-left-color: #e74c3c;
+  border-left-color: #f39c12;
 }
 
 .explanationCard:nth-child(2) {
-  border-left-color: #3498db;
+  border-left-color: #e74c3c;
 }
 
 .explanationCard:nth-child(3) {
-  border-left-color: #27ae60;
+  border-left-color: #3498db;
 }
 
 .explanationCard:nth-child(4) {
+  border-left-color: #27ae60;
+}
+
+.explanationCard:nth-child(5) {
   border-left-color: #9b59b6;
 }
 

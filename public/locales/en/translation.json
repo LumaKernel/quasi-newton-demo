@@ -57,6 +57,13 @@
   },
   "explanation": {
     "title": "Understanding Quasi-Newton Methods",
+    "steepestDescent": {
+      "title": "Gradient Descent (Steepest Descent)",
+      "description": "The simplest optimization method. Uses only the gradient to determine the search direction: d = -\u2207f. Simple but can be slow for ill-conditioned problems due to zigzag behavior.",
+      "links": [
+        { "label": "Wikipedia", "url": "https://en.wikipedia.org/wiki/Gradient_descent" }
+      ]
+    },
     "newton": {
       "title": "Newton's Method",
       "description": "Uses the exact Hessian matrix H(x) to compute the search direction: d = -H⁻¹∇f. Provides quadratic convergence but requires computing and inverting the Hessian at each step.",
@@ -155,6 +162,10 @@
     }
   },
   "optimizers": {
+    "steepestDescent": {
+      "name": "Gradient Descent",
+      "description": "Steepest descent using negative gradient direction"
+    },
     "newton": {
       "name": "Newton's Method",
       "description": "Uses true Hessian matrix for quadratic convergence"

@@ -57,6 +57,14 @@
   },
   "explanation": {
     "title": "準ニュートン法の理解",
+    "steepestDescent": {
+      "title": "勾配降下法（最急降下法）",
+      "description": "最も基本的な最適化手法。勾配のみを使用して探索方向を決定：d = -\u2207f。シンプルですが、悪条件問題ではジグザグ挙動により収束が遅くなることがあります。",
+      "links": [
+        { "label": "Wikipedia (日本語)", "url": "https://ja.wikipedia.org/wiki/%E6%9C%80%E6%80%A5%E9%99%8D%E4%B8%8B%E6%B3%95" },
+        { "label": "Wikipedia (EN)", "url": "https://en.wikipedia.org/wiki/Gradient_descent" }
+      ]
+    },
     "newton": {
       "title": "ニュートン法",
       "description": "正確なヘッセ行列 H(x) を使用して探索方向を計算：d = -H⁻¹∇f。2次収束を実現しますが、各ステップでヘッセ行列の計算と逆行列の計算が必要です。",
@@ -157,6 +165,10 @@
     }
   },
   "optimizers": {
+    "steepestDescent": {
+      "name": "勾配降下法",
+      "description": "負の勾配方向を使用する最急降下法"
+    },
     "newton": {
       "name": "ニュートン法",
       "description": "2次収束のために真のヘッセ行列を使用"

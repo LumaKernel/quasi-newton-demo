@@ -250,7 +250,7 @@ const App = () => {
         <section className={styles.explanation}>
           <h2>{t('explanation.title')}</h2>
           <div className={styles.explanationContent}>
-            {(['newton', 'bfgs', 'dfp', 'sr1'] as const).map((method) => {
+            {(['steepestDescent', 'newton', 'bfgs', 'dfp', 'sr1'] as const).map((method) => {
               const links = t(`explanation.${method}.links`, { returnObjects: true }) as
                 | readonly { readonly label: string; readonly url: string }[]
                 | string;
