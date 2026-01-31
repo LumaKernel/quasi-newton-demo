@@ -273,7 +273,6 @@
   },
   "formulaLegend": {
     "title": "Symbol Reference",
-    "hint": "Hover over symbols for explanations",
     "xk": { "name": "Position", "desc": "Current point at iteration k. The algorithm seeks to find the minimum by updating this position." },
     "grad": { "name": "Gradient", "desc": "The gradient (first derivatives) of f at xₖ. Points in the direction of steepest increase." },
     "dk": { "name": "Direction", "desc": "Search direction at iteration k. For quasi-Newton: dₖ = -Bₖ∇f. For steepest descent: dₖ = -∇f." },
