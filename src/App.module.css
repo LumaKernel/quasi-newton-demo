@@ -49,6 +49,12 @@
   opacity: 1;
 }
 
+.githubLink svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
 .main {
   padding: 24px 32px;
   max-width: 1600px;
