@@ -91,14 +91,29 @@ export const LineSearchChart = ({
       .domain([fMin - fPadding, fMax + fPadding])
       .range([innerHeight, 0]);
 
-    // Axes
-    g.append('g')
-      .attr('transform', `translate(0,${innerHeight})`)
-      .call(d3.axisBottom(xScale).ticks(5))
-      .attr('font-size', '10px');
+    // Axes - compute explicit tick values to avoid duplicates
+    const xTickCount = 5;
+    const xTickValues = Array.from({ length: xTickCount + 1 }, (_, i) => (i / xTickCount) * alphaMax);
 
     g.append('g')
-      .call(d3.axisLeft(yScale).ticks(5).tickFormat((d) => {
+      .attr('transform', `translate(0,${innerHeight})`)
+      .call(d3.axisBottom(xScale).tickValues(xTickValues).tickFormat((d) => {
+        const val = d as number;
+        if (val === 0) return '0';
+        if (val < 0.01) return val.toExponential(1);
+        if (val < 1) return val.toFixed(2);
+        return val.toFixed(1);
+      }))
+      .attr('font-size', '10px');
+
+    const yRange = (fMax + fPadding) - (fMin - fPadding);
+    const yTickCount = 5;
+    const yTickValues = Array.from({ length: yTickCount + 1 }, (_, i) =>
+      (fMin - fPadding) + (i / yTickCount) * yRange
+    );
+
+    g.append('g')
+      .call(d3.axisLeft(yScale).tickValues(yTickValues).tickFormat((d) => {
         const val = d as number;
         if (Math.abs(val) >= 1000 || (Math.abs(val) < 0.01 && val !== 0)) {
           return val.toExponential(1);
