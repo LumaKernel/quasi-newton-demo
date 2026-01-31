@@ -325,7 +325,7 @@ export const ContourPlot = ({
         .attr('fill', '#3498db');
     }
 
-    const { type, currentPoint, gradient, direction, nextPoint, trustRegionRadius } = activeOverlay;
+    const { type, currentPoint, gradient, direction, nextPoint, trustRegionRadius, fx, hessian } = activeOverlay;
 
     const cx = xScale(currentPoint[0]);
     const cy = yScale(currentPoint[1]);
@@ -453,6 +453,88 @@ export const ContourPlot = ({
         .attr('fill', '#9b59b6')
         .attr('font-size', '11px')
         .text('Δ');
+    }
+
+    // Draw quadratic model contours
+    if (type === 'quadraticModel' && hessian && gradient && fx !== undefined) {
+      // Quadratic model: m(x) = f(xk) + g'(x-xk) + 0.5*(x-xk)'H(x-xk)
+      const H = hessian;
+      const g = gradient;
+      const xk = currentPoint;
+
+      // Generate contours of the quadratic model in a local region
+      const localRange = Math.min(xMax - xMin, yMax - yMin) * 0.3;
+      const resolution = 40;
+      const quadValues: number[] = new Array(resolution * resolution);
+
+      const localXMin = currentPoint[0] - localRange;
+      const localXMax = currentPoint[0] + localRange;
+      const localYMin = currentPoint[1] - localRange;
+      const localYMax = currentPoint[1] + localRange;
+
+      let minQuad = Infinity;
+      let maxQuad = -Infinity;
+
+      for (let j = 0; j < resolution; j++) {
+        for (let i = 0; i < resolution; i++) {
+          const x = localXMin + (i / (resolution - 1)) * (localXMax - localXMin);
+          const y = localYMax - (j / (resolution - 1)) * (localYMax - localYMin);
+          const dx = x - xk[0];
+          const dy = y - xk[1];
+
+          // m(x) = fx + g'*d + 0.5*d'*H*d
+          const gradTerm = g[0] * dx + g[1] * dy;
+          const hessTermX = H[0][0] * dx + H[0][1] * dy;
+          const hessTermY = H[1][0] * dx + H[1][1] * dy;
+          const quadTerm = 0.5 * (dx * hessTermX + dy * hessTermY);
+          const val = fx + gradTerm + quadTerm;
+
+          quadValues[i + j * resolution] = val;
+          minQuad = Math.min(minQuad, val);
+          maxQuad = Math.max(maxQuad, val);
+        }
+      }
+
+      // Generate contours
+      const numLevels = 8;
+      const levels: number[] = [];
+      for (let i = 0; i < numLevels; i++) {
+        levels.push(minQuad + (i / (numLevels - 1)) * (maxQuad - minQuad) * 0.5);
+      }
+
+      const quadContours = d3.contours()
+        .size([resolution, resolution])
+        .thresholds(levels)(quadValues);
+
+      // Custom path transformation
+      const geoTransform = d3.geoTransform({
+        point(px, py) {
+          const x = localXMin + (px / (resolution - 1)) * (localXMax - localXMin);
+          const y = localYMax - (py / (resolution - 1)) * (localYMax - localYMin);
+          this.stream.point(xScale(x), yScale(y));
+        },
+      });
+
+      overlay.selectAll('path.quad-contour')
+        .data(quadContours)
+        .join('path')
+        .attr('class', 'quad-contour')
+        .attr('d', d3.geoPath(geoTransform))
+        .attr('fill', 'none')
+        .attr('stroke', '#e67e22')
+        .attr('stroke-width', 1.5)
+        .attr('stroke-opacity', 0.7)
+        .attr('stroke-dasharray', '3,2');
+
+      // Label
+      overlay
+        .append('text')
+        .attr('x', cx + 20)
+        .attr('y', cy - 20)
+        .attr('fill', '#e67e22')
+        .attr('font-size', '11px')
+        .attr('font-weight', 'bold')
+        .text('m(d) quadratic model');
     }
 
     // Current point highlight

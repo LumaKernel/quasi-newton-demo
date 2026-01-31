@@ -1,0 +1,112 @@
+.container {
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid #e8e8e8;
+}
+
+.title {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.section {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 8px;
+  padding-bottom: 0;
+}
+
+.sectionHeader {
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.eigenvalueBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.eigenvalueLabel {
+  font-size: 11px;
+  font-family: 'Monaco', 'Consolas', monospace;
+  color: #666;
+  width: 20px;
+}
+
+.barContainer {
+  flex: 1;
+  height: 14px;
+  background: #f5f5f5;
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.negativeZone {
+  position: absolute;
+  right: 0;
+  height: 100%;
+  background: rgba(231, 76, 60, 0.2);
+}
+
+.eigenvalueValue {
+  font-size: 10px;
+  font-family: 'Monaco', 'Consolas', monospace;
+  color: #333;
+  width: 65px;
+  text-align: right;
+}
+
+.conditionNumber {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed #eee;
+  font-size: 11px;
+}
+
+.conditionNumber span {
+  color: #888;
+}
+
+.conditionNumber code {
+  font-family: 'Monaco', 'Consolas', monospace;
+  color: #333;
+  font-weight: 500;
+}
+
+.explanation {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+}
+
+.explanation p {
+  margin: 0;
+  font-size: 11px;
+  color: #666;
+  line-height: 1.5;
+}

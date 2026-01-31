@@ -6,6 +6,8 @@ import { rosenbrock } from '@/core/functions/index.ts';
 import { ContourPlot } from '@/visualization/ContourPlot.tsx';
 import { MatrixComparison } from '@/visualization/MatrixComparison.tsx';
 import { SurfacePlot3D } from '@/visualization/SurfacePlot3D/index.ts';
+import { ConvergenceCharts } from '@/visualization/ConvergenceCharts.tsx';
+import { EigenvalueAnalysis } from '@/visualization/EigenvalueAnalysis.tsx';
 import {
   FunctionSelector,
   AlgorithmSelector,
@@ -14,6 +16,7 @@ import {
   LanguageSwitcher,
   ViewModeToggle,
   StepDetails,
+  FormulaLegend,
   algorithmColors,
 } from '@/components/index.ts';
 import { useOptimization, useAnimation } from '@/hooks/index.ts';
@@ -200,6 +203,7 @@ const App = () => {
                           iterations={result.iterations}
                           currentIteration={currentIteration}
                           color={algorithmColors[algId]}
+                          func={selectedFunction}
                         />
                       </div>
                     </div>
@@ -243,6 +247,7 @@ const App = () => {
                           iterations={result.iterations}
                           currentIteration={currentIteration}
                           color={algorithmColors[algId]}
+                          func={selectedFunction}
                         />
                       </div>
                     </div>
@@ -263,12 +268,27 @@ const App = () => {
           <div className={styles.sidePanel}>
             <ComparisonPanel results={results} />
 
+            <ConvergenceCharts
+              results={results}
+              currentIteration={currentIteration}
+              algorithmColors={algorithmColors}
+            />
+
+            <FormulaLegend />
+
             {currentIterationState && quasiNewtonResult && (
-              <MatrixComparison
-                trueHessian={currentIterationState.trueHessian}
-                approximateInverseHessian={currentIterationState.hessianApprox}
-                iteration={currentIteration}
-              />
+              <>
+                <MatrixComparison
+                  trueHessian={currentIterationState.trueHessian}
+                  approximateInverseHessian={currentIterationState.hessianApprox}
+                  iteration={currentIteration}
+                />
+                <EigenvalueAnalysis
+                  trueHessian={currentIterationState.trueHessian}
+                  approximateInverseHessian={currentIterationState.hessianApprox}
+                  iteration={currentIteration}
+                />
+              </>
             )}
           </div>
         </section>

@@ -242,6 +242,49 @@
     "en": "English",
     "ja": "Japanese"
   },
+  "convergence": {
+    "title": "Convergence Analysis",
+    "functionValue": "Function Value f(x)",
+    "gradientNorm": "Gradient Norm ||∇f||",
+    "stepSize": "Step Size α",
+    "trustRegionRadius": "Trust Region Δ"
+  },
+  "lineSearch": {
+    "title": "Line Search",
+    "noData": "Select an iteration with a search direction",
+    "armijoCondition": "Armijo condition: f(x + αd) ≤ f(x) + c₁α∇f·d"
+  },
+  "eigenvalue": {
+    "title": "Eigenvalue Analysis (k={{iteration}})",
+    "trueHessian": "True Hessian",
+    "trueInverse": "True Inverse",
+    "approxInverse": "Approx. Inverse",
+    "conditionNumber": "Condition κ",
+    "explanation": "Large eigenvalue ratios (condition numbers) indicate ill-conditioning, causing slow convergence. Quasi-Newton methods aim to approximate the Hessian's eigenstructure to improve convergence."
+  },
+  "secant": {
+    "title": "Secant Condition",
+    "noData": "Need at least 2 iterations",
+    "description": "The inverse Hessian approximation B must satisfy this condition",
+    "error": "Error ||Bₖy - s||",
+    "relativeError": "Relative Error",
+    "curvature": "curvature",
+    "explanation": "The secant condition ensures the approximation B captures how the gradient changes along the step direction. y^T s > 0 (positive curvature) is required for BFGS to maintain positive definiteness."
+  },
+  "formulaLegend": {
+    "title": "Symbol Reference",
+    "hint": "Hover over symbols for explanations",
+    "xk": { "name": "Position", "desc": "Current point at iteration k. The algorithm seeks to find the minimum by updating this position." },
+    "grad": { "name": "Gradient", "desc": "The gradient (first derivatives) of f at xₖ. Points in the direction of steepest increase." },
+    "dk": { "name": "Direction", "desc": "Search direction at iteration k. For quasi-Newton: dₖ = -Bₖ∇f. For steepest descent: dₖ = -∇f." },
+    "alpha": { "name": "Step size", "desc": "Step length along the search direction, determined by line search to ensure sufficient decrease." },
+    "H": { "name": "Hessian", "desc": "Matrix of second partial derivatives. Captures local curvature information of the function." },
+    "Bk": { "name": "Inv. Hessian approx.", "desc": "Quasi-Newton approximation to the inverse Hessian, updated each iteration using gradient changes." },
+    "sk": { "name": "Step vector", "desc": "The actual step taken: difference between consecutive iterates." },
+    "yk": { "name": "Gradient diff.", "desc": "Change in gradient between consecutive iterates. Used to update Bₖ." },
+    "Delta": { "name": "Trust region", "desc": "Trust region radius. Limits step size to region where quadratic model is reliable." },
+    "rho": { "name": "Reduction ratio", "desc": "Ratio of actual reduction to predicted reduction. Used to adjust trust region." }
+  },
   "stepDetails": {
     "updateFormula": "Update Formula",
     "updateRule": "update rule",

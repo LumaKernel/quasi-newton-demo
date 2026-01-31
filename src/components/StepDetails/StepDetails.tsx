@@ -3,8 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { InlineMath, BlockMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
 import type { IterationState } from '@/core/optimizers/types.ts';
+import type { ObjectiveFunction } from '@/core/functions/types.ts';
 import { Tooltip } from '@/components/Tooltip.tsx';
 import { useVisualization, type OverlayData } from '@/contexts/index.ts';
+import { LineSearchChart } from '@/visualization/LineSearchChart.tsx';
+import { SecantCondition } from '@/visualization/SecantCondition.tsx';
 import styles from './StepDetails.module.css';
 
 interface StepDetailsProps {
@@ -12,6 +15,7 @@ interface StepDetailsProps {
   readonly iterations: readonly IterationState[];
   readonly currentIteration: number;
   readonly color: string;
+  readonly func?: ObjectiveFunction;
 }
 
 const formatNumber = (n: number, precision = 4): string => {
@@ -91,6 +95,7 @@ export const StepDetails = ({
   iterations,
   currentIteration,
   color,
+  func,
 }: StepDetailsProps) => {
   const { t } = useTranslation();
   const { showOverlay, hideOverlay } = useVisualization();
@@ -120,6 +125,7 @@ export const StepDetails = ({
           algorithmId,
           currentPoint: [currentState.x[0], currentState.x[1]] as readonly [number, number],
           gradient: [currentState.gradient[0], currentState.gradient[1]] as readonly [number, number],
+          fx: currentState.fx,
         };
 
         const overlay: OverlayData = {
@@ -135,6 +141,10 @@ export const StepDetails = ({
             trustRegionRadius: Math.sqrt(
               currentState.direction[0] ** 2 + currentState.direction[1] ** 2,
             ),
+          }),
+          // Include Hessian for quadratic model visualization
+          ...(currentState.trueHessian && {
+            hessian: currentState.trueHessian,
           }),
         };
         showOverlay(overlay);
@@ -209,7 +219,18 @@ export const StepDetails = ({
               {t('stepDetails.qpSubproblem')}
             </summary>
             <div className={styles.hessianUpdateFormula}>
-              <BlockMath math={formulas.qpSubproblem} />
+              <div
+                className={styles.hoverable}
+                {...createOverlayHandler('quadraticModel')}
+                title={t('stepDetails.hoverHint')}
+              >
+                <BlockMath math={formulas.qpSubproblem} />
+                <span className={styles.hoverHintInline}>
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                  </svg>
+                </span>
+              </div>
               <div className={styles.qpExplanation}>
                 {t('stepDetails.qpExplanation')}
               </div>
@@ -366,6 +387,20 @@ export const StepDetails = ({
           </span>
         </div>
       )}
+
+      {func && (
+        <LineSearchChart
+          func={func}
+          iteration={currentState}
+          color={color}
+        />
+      )}
+
+      <SecantCondition
+        iterations={iterations}
+        currentIteration={currentIteration}
+        algorithmId={algorithmId}
+      />
     </div>
   );
 };

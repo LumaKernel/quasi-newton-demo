@@ -5,7 +5,8 @@ export type OverlayType =
   | 'direction'
   | 'nextPoint'
   | 'trustRegion'
-  | 'hessianEigenvectors';
+  | 'hessianEigenvectors'
+  | 'quadraticModel';
 
 export interface OverlayData {
   readonly type: OverlayType;
@@ -15,6 +16,8 @@ export interface OverlayData {
   readonly direction?: readonly [number, number];
   readonly nextPoint?: readonly [number, number];
   readonly trustRegionRadius?: number;
+  readonly fx?: number;
+  readonly hessian?: readonly (readonly number[])[];
   readonly hessianEigenvectors?: {
     readonly v1: readonly [number, number];
     readonly v2: readonly [number, number];

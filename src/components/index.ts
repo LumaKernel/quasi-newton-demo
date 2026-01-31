@@ -6,3 +6,5 @@ export { LanguageSwitcher } from './LanguageSwitcher.tsx';
 export { ViewModeToggle } from './ViewModeToggle.tsx';
 export { StepDetails } from './StepDetails/index.ts';
 export { Tooltip } from './Tooltip.tsx';
+export { MathTooltip } from './MathTooltip.tsx';
+export { FormulaLegend } from './FormulaLegend.tsx';
