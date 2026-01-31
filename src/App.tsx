@@ -73,8 +73,9 @@ const App = () => {
   );
 
   // Get the first quasi-Newton result for Hessian comparison
+  // BB method also approximates inverse Hessian (as scalar * I)
   const quasiNewtonResult = useMemo(() => {
-    for (const id of ['bfgs', 'dfp', 'sr1']) {
+    for (const id of ['bfgs', 'dfp', 'sr1', 'bb']) {
       const result = results.get(id);
       if (result) return { id, result };
     }
