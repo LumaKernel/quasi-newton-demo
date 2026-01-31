@@ -193,6 +193,7 @@
   },
   "stepDetails": {
     "updateFormula": "更新式",
+    "updateRule": "の更新則",
     "lineSearchDesc": "αは直線探索（Armijo/Wolfe条件）により十分な減少を保証するように決定されます",
     "alphaDesc": "降下条件を満たす直線探索で求めたステップ幅",
     "improvement": "改善量",

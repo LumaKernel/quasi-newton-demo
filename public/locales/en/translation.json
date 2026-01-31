@@ -190,6 +190,7 @@
   },
   "stepDetails": {
     "updateFormula": "Update Formula",
+    "updateRule": "update rule",
     "lineSearchDesc": "α is determined by line search (Armijo/Wolfe conditions) to ensure sufficient decrease",
     "alphaDesc": "Step size found by line search satisfying descent conditions",
     "improvement": "Improvement",

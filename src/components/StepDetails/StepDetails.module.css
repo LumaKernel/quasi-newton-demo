@@ -4,6 +4,8 @@
   padding: 16px;
   font-size: 13px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .header {
@@ -23,18 +25,18 @@
 
 .iterationBadge {
   background: #f0f0f0;
-  padding: 2px 8px;
+  padding: 4px 10px;
   border-radius: 4px;
-  font-family: 'Monaco', 'Consolas', monospace;
-  font-size: 12px;
+  font-size: 13px;
   color: #666;
 }
 
 .formulaSection {
-  margin-bottom: 12px;
-  padding: 10px;
-  background: #f8f9fa;
-  border-radius: 6px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
 }
 
 .formulaTitle {
@@ -46,41 +48,140 @@
   margin-bottom: 8px;
 }
 
-.formulaRow {
+.formulaBlock {
+  margin: 8px 0;
+  text-align: center;
+}
+
+.formulaBlock :global(.katex) {
+  font-size: 1.1em;
+}
+
+.hessianUpdateDetails {
+  margin-top: 12px;
+  border-top: 1px dashed #ddd;
+  padding-top: 8px;
+}
+
+.hessianUpdateSummary {
+  cursor: pointer;
+  font-size: 12px;
+  color: #666;
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
+  gap: 6px;
+  padding: 4px 0;
 }
 
-.formulaRow:last-child {
-  margin-bottom: 0;
+.hessianUpdateSummary:hover {
+  color: #333;
 }
 
-.formula {
-  font-family: 'Monaco', 'Consolas', monospace;
-  font-size: 13px;
-  color: #2c3e50;
+.hessianUpdateSummary :global(.katex) {
+  font-size: 1em;
+}
+
+.hessianUpdateFormula {
+  margin-top: 8px;
+  padding: 8px;
   background: #fff;
-  padding: 4px 8px;
   border-radius: 4px;
-  border: 1px solid #e0e0e0;
+  overflow-x: auto;
+}
+
+.hessianUpdateFormula :global(.katex) {
+  font-size: 0.95em;
+}
+
+.whereClause {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dotted #ddd;
+  font-size: 12px;
+  color: #666;
+}
+
+.whereClause :global(.katex) {
+  font-size: 0.9em;
+}
+
+.valuesSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.valueRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 32px;
+}
+
+.valueLabel {
+  min-width: 70px;
+  font-weight: 500;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.valueLabel :global(.katex) {
+  font-size: 1em;
+}
+
+.valueData {
+  flex: 1;
+  background: #f5f7fa;
+  padding: 6px 10px;
+  border-radius: 4px;
+  overflow-x: auto;
+  border: 1px solid #e8e8e8;
+}
+
+.valueData :global(.katex) {
+  font-size: 0.95em;
+}
+
+.valueCode {
+  flex: 1;
+  font-family: 'Monaco', 'Consolas', 'Menlo', monospace;
+  font-size: 13px;
+  color: #333;
+  background: #f5f7fa;
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #e8e8e8;
+}
+
+.separator {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #ddd, transparent);
+  margin: 4px 0;
 }
 
 .tooltip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
-  background: #ddd;
+  width: 18px;
+  height: 18px;
+  background: #e0e0e0;
   color: #666;
   border-radius: 50%;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: bold;
   cursor: help;
   position: relative;
   flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+
+.tooltip:hover {
+  background: #3498db;
+  color: #fff;
 }
 
 .tooltip::after {
@@ -91,20 +192,19 @@
   transform: translateX(-50%);
   background: #2c3e50;
   color: #fff;
-  padding: 8px 12px;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border-radius: 8px;
   font-size: 12px;
   font-weight: normal;
-  white-space: nowrap;
-  max-width: 280px;
   white-space: normal;
+  max-width: 260px;
   text-align: left;
-  line-height: 1.4;
+  line-height: 1.5;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.15s ease, visibility 0.15s ease;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
 .tooltip::before {
@@ -127,90 +227,53 @@
   visibility: visible;
 }
 
-.valuesSection {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.valueRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.valueLabel {
-  min-width: 60px;
-  font-weight: 500;
-  color: #555;
-}
-
-.valueLabel sub {
-  font-size: 10px;
-}
-
-.valueData {
-  flex: 1;
-  font-family: 'Monaco', 'Consolas', monospace;
-  font-size: 12px;
-  color: #333;
-  background: #f5f5f5;
-  padding: 4px 8px;
-  border-radius: 4px;
-  overflow-x: auto;
-  white-space: nowrap;
-}
-
-.separator {
-  height: 1px;
-  background: #e0e0e0;
-  margin: 8px 0;
-}
-
 .improvement {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   margin-top: 4px;
-  padding: 6px 10px;
+  padding: 8px 12px;
   background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
-  border-radius: 4px;
+  border-radius: 6px;
+  border: 1px solid #c8e6c9;
 }
 
 .improvementLabel {
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   color: #2e7d32;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .improvementValue {
-  font-family: 'Monaco', 'Consolas', monospace;
-  font-size: 12px;
+  font-family: 'Monaco', 'Consolas', 'Menlo', monospace;
+  font-size: 13px;
   color: #1b5e20;
-  font-weight: 600;
+}
+
+.improvementValue :global(.katex) {
+  font-size: 1em;
 }
 
 .hessianNote {
   margin-top: 12px;
-  padding: 8px 10px;
-  background: #fff3e0;
-  border-radius: 4px;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #fff3e0 0%, #fff8e1 100%);
+  border-radius: 6px;
+  border: 1px solid #ffe0b2;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-size: 12px;
 }
 
-.hessianNote .tooltip {
-  background: #ff9800;
-  color: #fff;
-  font-family: 'Monaco', 'Consolas', monospace;
-  width: auto;
-  padding: 2px 6px;
-  border-radius: 3px;
+.hessianNote :global(.katex) {
+  font-size: 1em;
+  color: #e65100;
 }
 
 .hessianNoteText {
-  color: #e65100;
+  color: #bf360c;
   font-size: 11px;
 }

@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { InlineMath, BlockMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
 import type { IterationState } from '@/core/optimizers/types.ts';
 import styles from './StepDetails.module.css';
 
@@ -17,46 +19,52 @@ const formatNumber = (n: number, precision = 4): string => {
   return n.toFixed(precision);
 };
 
-const formatVector = (v: readonly number[], precision = 4): string => {
-  return `[${v.map((x) => formatNumber(x, precision)).join(', ')}]`;
+const formatVectorLatex = (v: readonly number[], precision = 4): string => {
+  const entries = v.map((x) => formatNumber(x, precision)).join(' \\\\ ');
+  return `\\begin{pmatrix} ${entries} \\end{pmatrix}`;
 };
 
-type FormulaKey =
-  | 'steepestDescent'
-  | 'newton'
-  | 'bfgs'
-  | 'dfp'
-  | 'sr1';
+type FormulaKey = 'steepestDescent' | 'newton' | 'bfgs' | 'dfp' | 'sr1';
 
-const methodFormulas: Record<FormulaKey, {
-  readonly direction: string;
-  readonly directionDesc: string;
-  readonly update: string;
-}> = {
+const methodFormulas: Record<
+  FormulaKey,
+  {
+    readonly direction: string;
+    readonly directionDesc: string;
+    readonly update: string;
+    readonly hessianUpdate?: string;
+  }
+> = {
   steepestDescent: {
-    direction: 'd = -∇f(x)',
+    direction: 'd_k = -\\nabla f(x_k)',
     directionDesc: 'Negative gradient (steepest descent direction)',
-    update: 'x_{k+1} = x_k + α_k · d_k',
+    update: 'x_{k+1} = x_k + \\alpha_k d_k',
   },
   newton: {
-    direction: 'd = -H⁻¹ · ∇f(x)',
+    direction: 'd_k = -H^{-1} \\nabla f(x_k)',
     directionDesc: 'Newton direction using true inverse Hessian',
-    update: 'x_{k+1} = x_k + α_k · d_k',
+    update: 'x_{k+1} = x_k + \\alpha_k d_k',
   },
   bfgs: {
-    direction: 'd = -B_k · ∇f(x)',
-    directionDesc: 'Quasi-Newton direction using BFGS approximation B_k ≈ H⁻¹',
-    update: 'x_{k+1} = x_k + α_k · d_k',
+    direction: 'd_k = -B_k \\nabla f(x_k)',
+    directionDesc: 'Quasi-Newton direction using BFGS approximation',
+    update: 'x_{k+1} = x_k + \\alpha_k d_k',
+    hessianUpdate:
+      'B_{k+1} = \\left(I - \\rho_k s_k y_k^T\\right) B_k \\left(I - \\rho_k y_k s_k^T\\right) + \\rho_k s_k s_k^T',
   },
   dfp: {
-    direction: 'd = -B_k · ∇f(x)',
-    directionDesc: 'Quasi-Newton direction using DFP approximation B_k ≈ H⁻¹',
-    update: 'x_{k+1} = x_k + α_k · d_k',
+    direction: 'd_k = -B_k \\nabla f(x_k)',
+    directionDesc: 'Quasi-Newton direction using DFP approximation',
+    update: 'x_{k+1} = x_k + \\alpha_k d_k',
+    hessianUpdate:
+      'B_{k+1} = B_k + \\frac{s_k s_k^T}{s_k^T y_k} - \\frac{B_k y_k y_k^T B_k}{y_k^T B_k y_k}',
   },
   sr1: {
-    direction: 'd = -B_k · ∇f(x)',
-    directionDesc: 'Quasi-Newton direction using SR1 approximation B_k ≈ H⁻¹',
-    update: 'x_{k+1} = x_k + α_k · d_k',
+    direction: 'd_k = -B_k \\nabla f(x_k)',
+    directionDesc: 'Quasi-Newton direction using SR1 approximation',
+    update: 'x_{k+1} = x_k + \\alpha_k d_k',
+    hessianUpdate:
+      'B_{k+1} = B_k + \\frac{(s_k - B_k y_k)(s_k - B_k y_k)^T}{(s_k - B_k y_k)^T y_k}',
   },
 };
 
@@ -81,7 +89,8 @@ export const StepDetails = ({
     return iterations[idx];
   }, [iterations, currentIteration]);
 
-  const formulas = methodFormulas[algorithmId as FormulaKey] ?? methodFormulas.steepestDescent;
+  const formulas =
+    methodFormulas[algorithmId as FormulaKey] ?? methodFormulas.steepestDescent;
 
   if (!currentState) {
     return null;
@@ -96,52 +105,70 @@ export const StepDetails = ({
           {t(`optimizers.${algorithmId}.name`)}
         </span>
         <span className={styles.iterationBadge}>
-          k = {currentIteration}
+          <InlineMath math={`k = ${currentIteration}`} />
         </span>
       </div>
 
       <div className={styles.formulaSection}>
         <div className={styles.formulaTitle}>{t('stepDetails.updateFormula')}</div>
-        <div className={styles.formulaRow}>
-          <code className={styles.formula}>{formulas.direction}</code>
-          <span className={styles.tooltip} data-tooltip={formulas.directionDesc}>?</span>
+        <div className={styles.formulaBlock}>
+          <BlockMath math={formulas.direction} />
         </div>
-        <div className={styles.formulaRow}>
-          <code className={styles.formula}>{formulas.update}</code>
-          <span
-            className={styles.tooltip}
-            data-tooltip={t('stepDetails.lineSearchDesc')}
-          >?</span>
+        <div className={styles.formulaBlock}>
+          <BlockMath math={formulas.update} />
         </div>
+        {formulas.hessianUpdate && (
+          <details className={styles.hessianUpdateDetails}>
+            <summary className={styles.hessianUpdateSummary}>
+              <InlineMath math="B_k" /> {t('stepDetails.updateRule')}
+            </summary>
+            <div className={styles.hessianUpdateFormula}>
+              <BlockMath math={formulas.hessianUpdate} />
+              <div className={styles.whereClause}>
+                <InlineMath math="s_k = x_{k+1} - x_k" />
+                <InlineMath math="y_k = \nabla f(x_{k+1}) - \nabla f(x_k)" />
+                {algorithmId === 'bfgs' && (
+                  <InlineMath math="\rho_k = \frac{1}{y_k^T s_k}" />
+                )}
+              </div>
+            </div>
+          </details>
+        )}
       </div>
 
       <div className={styles.valuesSection}>
         <div className={styles.valueRow}>
           <span className={styles.valueLabel}>
-            x<sub>k</sub>
+            <InlineMath math="x_k" />
           </span>
-          <code className={styles.valueData}>{formatVector(currentState.x)}</code>
+          <div className={styles.valueData}>
+            <InlineMath math={formatVectorLatex(currentState.x)} />
+          </div>
         </div>
 
         <div className={styles.valueRow}>
           <span className={styles.valueLabel}>
-            f(x<sub>k</sub>)
+            <InlineMath math="f(x_k)" />
           </span>
-          <code className={styles.valueData}>{formatNumber(currentState.fx, 6)}</code>
+          <code className={styles.valueCode}>{formatNumber(currentState.fx, 6)}</code>
         </div>
 
         <div className={styles.valueRow}>
           <span className={styles.valueLabel}>
-            ∇f(x<sub>k</sub>)
+            <InlineMath math="\nabla f(x_k)" />
           </span>
-          <code className={styles.valueData}>{formatVector(currentState.gradient)}</code>
+          <div className={styles.valueData}>
+            <InlineMath math={formatVectorLatex(currentState.gradient)} />
+          </div>
         </div>
 
         <div className={styles.valueRow}>
           <span className={styles.valueLabel}>
-            ‖∇f‖
+            <InlineMath math="\|\nabla f\|" />
           </span>
-          <code className={styles.valueData}>{formatNumber(currentState.gradientNorm, 6)}</code>
+          <code className={styles.valueCode}>
+            {formatNumber(currentState.gradientNorm, 6)}
+          </code>
         </div>
 
         {!isInitialState && currentState.direction && (
@@ -150,22 +177,28 @@ export const StepDetails = ({
 
             <div className={styles.valueRow}>
               <span className={styles.valueLabel}>
-                d<sub>k</sub>
+                <InlineMath math="d_k" />
               </span>
-              <code className={styles.valueData}>{formatVector(currentState.direction)}</code>
+              <div className={styles.valueData}>
+                <InlineMath math={formatVectorLatex(currentState.direction)} />
+              </div>
             </div>
 
             <div className={styles.valueRow}>
               <span className={styles.valueLabel}>
-                α<sub>k</sub>
+                <InlineMath math="\alpha_k" />
               </span>
-              <code className={styles.valueData}>
-                {currentState.alpha !== null ? formatNumber(currentState.alpha, 6) : '-'}
+              <code className={styles.valueCode}>
+                {currentState.alpha !== null
+                  ? formatNumber(currentState.alpha, 6)
+                  : '-'}
               </code>
               <span
                 className={styles.tooltip}
                 data-tooltip={t('stepDetails.alphaDesc')}
-              >?</span>
+              >
+                ?
+              </span>
             </div>
           </>
         )}
@@ -176,22 +209,28 @@ export const StepDetails = ({
 
             <div className={styles.valueRow}>
               <span className={styles.valueLabel}>
-                x<sub>k+1</sub>
+                <InlineMath math="x_{k+1}" />
               </span>
-              <code className={styles.valueData}>{formatVector(nextState.x)}</code>
+              <div className={styles.valueData}>
+                <InlineMath math={formatVectorLatex(nextState.x)} />
+              </div>
             </div>
 
             <div className={styles.valueRow}>
               <span className={styles.valueLabel}>
-                f(x<sub>k+1</sub>)
+                <InlineMath math="f(x_{k+1})" />
               </span>
-              <code className={styles.valueData}>{formatNumber(nextState.fx, 6)}</code>
+              <code className={styles.valueCode}>{formatNumber(nextState.fx, 6)}</code>
             </div>
 
             <div className={styles.improvement}>
-              <span className={styles.improvementLabel}>{t('stepDetails.improvement')}</span>
+              <span className={styles.improvementLabel}>
+                {t('stepDetails.improvement')}
+              </span>
               <code className={styles.improvementValue}>
-                Δf = {formatNumber(nextState.fx - currentState.fx, 6)}
+                <InlineMath
+                  math={`\\Delta f = ${formatNumber(nextState.fx - currentState.fx, 6)}`}
+                />
               </code>
             </div>
           </>
@@ -200,9 +239,7 @@ export const StepDetails = ({
 
       {(algorithmId === 'bfgs' || algorithmId === 'dfp' || algorithmId === 'sr1') && (
         <div className={styles.hessianNote}>
-          <span className={styles.tooltip} data-tooltip={t('stepDetails.hessianApproxDesc')}>
-            B<sub>k</sub> ≈ H⁻¹
-          </span>
+          <InlineMath math="B_k \approx H^{-1}" />
           <span className={styles.hessianNoteText}>
             {t('stepDetails.seeMatrixComparison')}
           </span>
