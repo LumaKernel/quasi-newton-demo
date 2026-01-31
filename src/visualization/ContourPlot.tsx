@@ -71,25 +71,52 @@ const generateContourData = (
     }
   }
 
-  // Use log scale for thresholds if range is large
-  const useLog = maxVal / Math.max(minVal, 0.001) > 100;
-  const numThresholds = 20;
+  // Generate thresholds that show detail at both low and high values
+  const range = maxVal - minVal;
   const thresholds: number[] = [];
 
-  if (useLog && minVal > 0) {
-    const logMin = Math.log(minVal);
-    const logMax = Math.log(Math.min(maxVal, minVal * 1000));
-    for (let i = 0; i < numThresholds; i++) {
-      thresholds.push(Math.exp(logMin + (i / (numThresholds - 1)) * (logMax - logMin)));
+  // Determine if we need special handling for large dynamic range
+  const dynamicRange = range / Math.max(Math.abs(minVal), 0.001);
+
+  if (dynamicRange > 10 && minVal >= 0) {
+    // Use log-like spacing for large dynamic range (Rosenbrock, etc.)
+    // Add offset to handle minVal close to 0
+    const offset = minVal < 0.01 ? 0.01 : 0;
+    const effectiveMin = minVal + offset;
+    const effectiveMax = maxVal + offset;
+
+    // More contours at lower values where the interesting structure is
+    const numLowContours = 15;  // More detail near minimum
+    const numHighContours = 10; // Less detail at high values
+
+    // Low value region: from min to min + 10% of range (log spaced)
+    const lowMax = effectiveMin + range * 0.1;
+    const logLowMin = Math.log(effectiveMin);
+    const logLowMax = Math.log(lowMax);
+    for (let i = 0; i < numLowContours; i++) {
+      const t = i / (numLowContours - 1);
+      thresholds.push(Math.exp(logLowMin + t * (logLowMax - logLowMin)) - offset);
+    }
+
+    // Mid-high value region: from 10% to 100% of range (log spaced, sparser)
+    const logMidMin = Math.log(lowMax);
+    const logMidMax = Math.log(Math.min(effectiveMax, effectiveMin * 10000));
+    for (let i = 1; i <= numHighContours; i++) {
+      const t = i / numHighContours;
+      thresholds.push(Math.exp(logMidMin + t * (logMidMax - logMidMin)) - offset);
     }
   } else {
-    const clampedMax = Math.min(maxVal, minVal + (maxVal - minVal) * 0.5);
+    // Linear spacing for functions with smaller dynamic range
+    const numThresholds = 25;
     for (let i = 0; i < numThresholds; i++) {
-      thresholds.push(minVal + (i / (numThresholds - 1)) * (clampedMax - minVal));
+      thresholds.push(minVal + (i / (numThresholds - 1)) * range);
     }
   }
 
-  return { values, thresholds };
+  // Remove duplicates and sort
+  const uniqueThresholds = [...new Set(thresholds.map(t => Math.round(t * 1e10) / 1e10))].sort((a, b) => a - b);
+
+  return { values, thresholds: uniqueThresholds };
 };
 
 export const ContourPlot = ({
@@ -153,16 +180,25 @@ export const ContourPlot = ({
     return generator(contourData.values);
   }, [contourData, innerWidth, innerHeight]);
 
-  const colorScale = useMemo(
-    () =>
-      d3
-        .scaleSequential(d3.interpolateYlGnBu)
-        .domain([
-          contourData.thresholds[0],
-          contourData.thresholds[contourData.thresholds.length - 1],
-        ]),
-    [contourData.thresholds],
-  );
+  const getColor = useMemo(() => {
+    const minT = contourData.thresholds[0];
+    const maxT = contourData.thresholds[contourData.thresholds.length - 1];
+    const range = maxT - minT;
+
+    // Use log scale for color when dynamic range is large
+    if (range / Math.max(Math.abs(minT), 0.001) > 10 && minT >= 0) {
+      const offset = minT < 0.01 ? 0.01 : 0;
+      const scale = d3
+        .scaleSequentialLog(d3.interpolateYlGnBu)
+        .domain([minT + offset, maxT + offset]);
+      return (value: number) => scale(value + offset);
+    }
+
+    const scale = d3
+      .scaleSequential(d3.interpolateYlGnBu)
+      .domain([minT, maxT]);
+    return (value: number) => scale(value);
+  }, [contourData.thresholds]);
 
   useEffect(() => {
     if (!svgRef.current) return;
@@ -183,7 +219,7 @@ export const ContourPlot = ({
       .join('path')
       .attr('class', 'contour')
       .attr('d', d3.geoPath())
-      .attr('fill', (d) => colorScale(d.value))
+      .attr('fill', (d) => getColor(d.value))
       .attr('stroke', '#666')
       .attr('stroke-width', 0.5)
       .attr('stroke-opacity', 0.3);
@@ -320,7 +356,7 @@ export const ContourPlot = ({
     showPath,
     showDirection,
     contours,
-    colorScale,
+    getColor,
     xScale,
     yScale,
     innerWidth,
