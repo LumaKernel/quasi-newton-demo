@@ -7,6 +7,7 @@ import type { ObjectiveFunction } from '@/core/functions/types.ts';
 import type { IterationState } from '@/core/optimizers/types.ts';
 import { Surface } from './Surface.tsx';
 import { OptimizationPath3D } from './OptimizationPath3D.tsx';
+import { Overlay3D } from './Overlay3D.tsx';
 import styles from './SurfacePlot3D.module.css';
 
 interface SurfacePlot3DProps {
@@ -78,6 +79,9 @@ export const SurfacePlot3D = ({
               resolution={resolution}
             />
           )}
+
+          {/* Interactive overlay */}
+          <Overlay3D func={func} />
         </Suspense>
 
         {/* Grid helper */}
