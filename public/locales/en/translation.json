@@ -1,8 +1,8 @@
 {
   "app": {
-    "title": "Quasi-Newton Method Visualization",
+    "title": "Quasi-Newton Visualization",
     "subtitle": "Interactive comparison of optimization algorithms",
-    "footer": "Built with React, D3.js, and TypeScript. Explore how quasi-Newton methods approximate the Hessian matrix."
+    "footer": "© Luma · Made with Claude Code"
   },
   "controls": {
     "objectiveFunction": "Objective Function",

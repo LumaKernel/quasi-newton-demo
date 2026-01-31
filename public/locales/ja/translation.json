@@ -2,7 +2,7 @@
   "app": {
     "title": "準ニュートン法の可視化",
     "subtitle": "最適化アルゴリズムのインタラクティブな比較",
-    "footer": "React、D3.js、TypeScriptで構築。準ニュートン法がヘッセ行列をどのように近似するかを探索できます。"
+    "footer": "© Luma · Made with Claude Code"
   },
   "controls": {
     "objectiveFunction": "目的関数",
